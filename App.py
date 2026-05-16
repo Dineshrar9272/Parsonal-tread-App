@@ -17,7 +17,7 @@ coins_list_data = [
 top_cards_json = json.dumps(top_cards_data)
 coins_list_json = json.dumps(coins_list_data)
 
-# --- 2. THE ABSOLUTE FLUID GEOMETRY INTERFACE ---
+# --- 2. SCREEN PORT ENGINE ---
 dashboard_html = """
 <!DOCTYPE html>
 <html lang="en">
@@ -91,7 +91,6 @@ dashboard_html = """
 
         .floating-exit-btn { display: none; position: fixed; top: 6px; right: 6px; z-index: 999999; background: rgba(112, 71, 235, 0.95); border: none; color: white; padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; }
 
-        /* Fullscreen View Overrides */
         body.fullscreen-active .top-navbar,
         body.fullscreen-active .search-container,
         body.fullscreen-active .panel-top-bar,
@@ -163,12 +162,14 @@ dashboard_html = """
 
         function generateDetailedAnalysis(coin, status) {
             let rsi = status === "BULLISH" ? Math.floor(Math.random() * 10) + 62 : Math.floor(Math.random() * 10) + 38;
-            return `
-                <div class="ai-report-line">🌐 <b>Asset:</b> <span class="ai-highlight">${coin}USDT</span></div>
-                <div class="ai-report-line">📈 <b>Vector:</b> ${status === "BULLISH" ? '<span style="color:#0ecb81; font-weight:bold;">Bullish Structure</span>' : '<span style="color:#f6465d; font-weight:bold;">Distribution</span>'}</div>
-                <div class="ai-report-line">🔢 <b>RSI Index:</b> <span class="ai-highlight">${rsi}</span></div>
-                <div class="ai-report-line">💡 <b>AI Bias:</b> ${status === "BULLISH" ? 'Buy setups active on minor pullbacks.' : 'Avoid long entry, sell pressure intense.'}</div>
-            `;
+            let themeColor = status === "BULLISH" ? "#0ecb81" : "#f6465d";
+            let statusText = status === "BULLISH" ? "Bullish Structure" : "Distribution";
+            let advice = status === "BULLISH" ? "Buy setups active on minor pullbacks." : "Avoid long entry, sell pressure intense.";
+            
+            return '<div class="ai-report-line">🌐 <b>Asset:</b> <span class="ai-highlight">' + coin + 'USDT</span></div>' +
+                   '<div class="ai-report-line">📈 <b>Vector:</b> <span style="color:' + themeColor + '; font-weight:bold;">' + statusText + '</span></div>' +
+                   '<div class="ai-report-line">🔢 <b>RSI Index:</b> <span class="ai-highlight">' + rsi + '</span></div>' +
+                   '<div class="ai-report-line">💡 <b>AI Bias:</b> ' + advice + '</div>';
         }
 
         function loadTvWidget(coin) {
@@ -213,7 +214,8 @@ dashboard_html = """
 
         function fireQuery() {
             const promptBox = document.getElementById('user-prompt');
-            const val = promptBox.value.trim().toLowerCase();
+            const originalPrompt = promptBox.value;
+            const val = originalPrompt.trim().toLowerCase();
             if(!val) return;
 
             let coin = document.getElementById('asset-search').value.toUpperCase().trim() || "BTC";
@@ -223,36 +225,27 @@ dashboard_html = """
             setTimeout(function() {
                 let aiResponse = "";
                 
-                // Dynamic Intelligence Parser Engine based on User Query Context
                 if (val.includes("entry") || val.includes("kaha banau") || val.includes("tread") || val.includes("trade")) {
-                    if (val.includes("brish") || val.includes("bearish")) {
-                        aiResponse = `
-                            <div class="ai-report-line" style="color: #f6465d; font-weight: bold;">🚨 Bearish Trade Setup Selected</div>
-                            <div class="ai-report-line">🛑 <b>Short Entry Zone:</b> Break below local VWAP support block.</div>
-                            <div class="ai-report-line">🎯 <b>Targets:</b> Support Block-1 & Fib extension 0.618</div>
-                            <div class="ai-report-line">🛡️ <b>Stop-Loss:</b> Previous 1H swing swing high matrix level.</div>
-                        `;
+                    if (val.includes("brish") || val.includes("bearish") || val.includes("down")) {
+                        aiResponse = '<div class="ai-report-line" style="color: #f6465d; font-weight: bold;">🚨 Bearish Trade Setup Selected</div>' +
+                                     '<div class="ai-report-line">🛑 <b>Short Entry Zone:</b> Break below local VWAP support block.</div>' +
+                                     '<div class="ai-report-line">🎯 <b>Targets:</b> Support Block-1 & Fib extension 0.618</div>' +
+                                     '<div class="ai-report-line">🛡️ <b>Stop-Loss:</b> Previous 1H swing high matrix level.</div>';
                     } else {
-                        // Default to Bullish or general entry guidance
-                        aiResponse = `
-                            <div class="ai-report-line" style="color: #0ecb81; font-weight: bold;">✅ Bullish Setup Confirmed</div>
-                            <div class="ai-report-line">🟢 <b>Long Entry Optimal Level:</b> Wait for a minor retracement to Order Block demand pool.</div>
-                            <div class="ai-report-line">🎯 <b>Take-Profit Targets:</b> Next liquidity pocket resistance lines.</div>
-                            <div class="ai-report-line">🛡️ <b>Invalidation (SL):</b> Structural close below current session low.</div>
-                        `;
+                        aiResponse = '<div class="ai-report-line" style="color: #0ecb81; font-weight: bold;">✅ Bullish Setup Confirmed</div>' +
+                                     '<div class="ai-report-line">🟢 <b>Long Entry Optimal Level:</b> Wait for retracement to Order Block demand pool.</div>' +
+                                     '<div class="ai-report-line">🎯 <b>Take-Profit Targets:</b> Next liquidity pocket resistance lines.</div>' +
+                                     '<div class="ai-report-line">🛡️ <b>Invalidation (SL):</b> Structural close below current session low.</div>';
                     }
-                } else if (val.includes("bullish")) {
-                    aiResponse = `<div class="ai-report-line">🤖 <b>AI Bias:</b> Aggressive buy side accumulation detected on <span class="ai-highlight">${coin}</span>. Momentum favors Long configurations.</div>`;
-                } else if (val.includes("bearish") || val.includes("brish")) {
-                    aiResponse = `<div class="ai-report-line">🤖 <b>AI Bias:</b> Order distribution phase active for <span class="ai-highlight">${coin}</span>. Sell blocks are heavily defended.</div>`;
+                } else if (val.includes("bullish") || val.includes("buy") || val.includes("up")) {
+                    aiResponse = '<div class="ai-report-line">🤖 <b>AI Bias:</b> Aggressive buy side accumulation detected on <span class="ai-highlight">' + coin + '</span>. Momentum favors Long configurations.</div>';
+                } else if (val.includes("bearish") || val.includes("brish") || val.includes("sell")) {
+                    aiResponse = '<div class="ai-report-line">🤖 <b>AI Bias:</b> Order distribution phase active for <span class="ai-highlight">' + coin + '</span>. Sell blocks are heavily defended.</div>';
                 } else {
-                    aiResponse = `<div class="ai-report-line">🤖 <b>AI Core Response:</b> Structure on <span class="ai-highlight">${coin}</span> shows strong limit order absorption. Overhead resistance is soft, matrix stable.</div>`;
+                    aiResponse = '<div class="ai-report-line">🤖 <b>AI Core Response:</b> Structure on <span class="ai-highlight">' + coin + '</span> shows strong limit order absorption. Overhead resistance is soft, matrix stable.</div>';
                 }
 
-                logBox.innerHTML = `
-                    <div class="ai-report-line" style="color: #7047eb; font-weight: bold;">💬 User Request: "${promptBox.value}"</div>
-                    ${aiResponse}
-                `;
+                logBox.innerHTML = '<div class="ai-report-line" style="color: #7047eb; font-weight: bold;">💬 User Request: "' + originalPrompt + '"</div>' + aiResponse;
                 promptBox.value = "";
             }, 450);
         }
@@ -266,8 +259,8 @@ dashboard_html = """
         }
 
         window.onload = function() {
-            document.getElementById('top-ticker-target').innerHTML = rawTickers.map(t => `<div class="ticker-card"><div class="ticker-title"><span>${t.symbol}</span></div><div class="ticker-price">${t.price}</div></div>`).join('');
-            document.getElementById('coin-list-target').innerHTML = rawCoins.map(c => `<div class="coin-item"><div><span class="coin-name">${c.symbol}</span><br><span class="coin-sub">${c.desc}</span></div><div style="font-weight:bold;">${c.price}</div><div class="coin-badge">${c.change}</div></div>`).join('');
+            document.getElementById('top-ticker-target').innerHTML = rawTickers.map(t => '<div class="ticker-card"><div class="ticker-title"><span>' + t.symbol + '</span></div><div class="ticker-price">' + t.price + '</div></div>').join('');
+            document.getElementById('coin-list-target').innerHTML = rawCoins.map(c => '<div class="coin-item"><div><span class="coin-name">' + c.symbol + '</span><br><span class="coin-sub">' + c.desc + '</span></div><div style="font-weight:bold;">' + c.price + '</div><div class="coin-badge">' + c.change + '</div></div>').join('');
             renderTradingCore();
         }
     </script>
