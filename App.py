@@ -1,17 +1,13 @@
 import streamlit as st
 
-# --- 1. SET THEME & APP CONSTANTS ---
-# Ensuring clean container space inside Streamlit canvas
-st.markdown("<style>div.block-container{padding-top:1rem; padding-bottom:0rem;}</style>", unsafe_html=True)
-
-# --- 2. RAW HIGH-PERFORMANCE CANVAS ENGINE (DIRECT DATA MAPPING) ---
+# --- 1. CORE HTML CONTAINER (PURE TEXT - NO PYTHON OR CSS MARKDOWN CONFLICTS) ---
 dashboard_html = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Delta Terminal</title>
+    <title>Delta Terminal Canvas</title>
     <style>
         html, body {
             background-color: #0b0c10; color: #ffffff;
@@ -21,16 +17,16 @@ dashboard_html = """
         }
         .top-navbar {
             background-color: #15171c; border-bottom: 1px solid #212630;
-            display: flex; justify-content: space-around; padding: 6px 0; height: 38px; box-sizing: border-box; align-items: center;
+            display: flex; justify-content: space-around; padding: 8px 0; height: 42px; box-sizing: border-box; align-items: center;
         }
         .nav-link { text-align: center; font-size: 11px; color: #808a9d; cursor: pointer; flex: 1; font-weight: 500; }
         .nav-link.active { color: #7047eb; font-weight: bold; border-bottom: 2px solid #7047eb; }
 
-        .container { padding: 6px; height: calc(100% - 38px); box-sizing: border-box; display: flex; flex-direction: column; }
+        .container { padding: 6px; height: calc(100% - 42px); box-sizing: border-box; display: flex; flex-direction: column; }
         .tab-panel { display: none; height: 100%; width: 100%; overflow: hidden; }
         .tab-panel.active { display: flex; flex-direction: column; height: 100%; gap: 4px; }
 
-        /* Home Layout Grid */
+        /* Home Scroller Layout Grid */
         .home-scroller { overflow-y: auto; height: 100%; width: 100%; display: flex; flex-direction: column; gap: 4px; }
         .ticker-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 4px; flex-shrink: 0; }
         .ticker-card { background: #15171c; border: 1px solid #212630; border-radius: 6px; padding: 8px; cursor: pointer; }
@@ -48,25 +44,25 @@ dashboard_html = """
         .badge-up { color: #0ecb81; }
         .badge-down { color: #f6465d; }
 
-        /* Charts Section */
-        .search-container { display: flex; gap: 4px; height: 30px; flex-shrink: 0; }
-        .search-bar { flex-grow: 1; padding: 0 8px; background: #15171c; border: 1px solid #212630; border-radius: 6px; color: #fff; font-size: 11px; }
-        .search-trigger { background: #7047eb; border: none; color: white; padding: 0 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        /* Real-Time TradingView Frame Configurations */
+        .search-container { display: flex; gap: 4px; height: 32px; flex-shrink: 0; margin-bottom: 4px; }
+        .search-bar { flex-grow: 1; padding: 0 8px; background: #15171c; border: 1px solid #212630; border-radius: 6px; color: #fff; font-size: 11px; outline: none; }
+        .search-trigger { background: #7047eb; border: none; color: white; padding: 0 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
         .screen-layout { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; overflow: hidden; height: 100%; }
         .chart-box { width: 100%; height: 100%; background: #15171c; border: 1px solid #212630; border-radius: 6px; overflow: hidden; }
         
-        /* Dedicated AI Terminal UI */
+        /* Dedicated Live AI Quantum Interface Logs */
         .ai-dedicated-panel { display: flex; flex-direction: column; height: 100%; background: #15171c; border: 1px solid #212630; border-radius: 6px; padding: 8px; box-sizing: border-box; }
         .ai-header-panel { display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; border-bottom: 1px solid #212630; padding-bottom: 6px; flex-shrink: 0; }
         .ai-badge { padding: 2px 6px; border-radius: 3px; font-size: 9px; color: #fff; background-color: #7047eb; font-weight: bold; }
         .ai-output-logs { font-size: 11px; color: #e1e4e8; line-height: 1.4; overflow-y: auto; flex-grow: 1; background: #101114; padding: 8px; border-radius: 6px; border: 1px solid #1f2226; margin: 6px 0; }
         .ai-report-line { margin-bottom: 6px; border-bottom: 1px dashed #212630; padding-bottom: 4px; }
         .ai-action-success { color: #0ecb81; font-weight: bold; font-size: 11px; background: rgba(14,203,129,0.08); padding: 5px; border-radius: 4px; margin-top: 4px; border: 1px solid rgba(14,203,129,0.2); }
-        .chat-input-bar { display: flex; gap: 4px; height: 32px; flex-shrink: 0; }
+        .chat-input-bar { display: flex; gap: 4px; height: 34px; flex-shrink: 0; }
         .chat-field { flex-grow: 1; padding: 0 10px; background: #0b0c10; border: 1px solid #212630; border-radius: 6px; color: #ffffff; font-size: 11px; outline: none; }
         .chat-btn { background: #7047eb; border: none; color: #fff; padding: 0 14px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
-        /* News Window layouts */
+        /* Isolated News Engine */
         .news-wrapper { overflow-y: auto; height: 100%; display: flex; flex-direction: column; gap: 6px; }
         .news-card { background: #15171c; border: 1px solid #212630; border-radius: 6px; padding: 10px; position: relative; }
         .news-impact-tag { position: absolute; top: 10px; right: 10px; font-size: 8px; font-weight: bold; padding: 2px 5px; border-radius: 3px; background: rgba(246, 70, 93, 0.15); color: #f6465d; text-transform: uppercase; }
@@ -87,7 +83,7 @@ dashboard_html = """
         
         <div id="home-ui" class="tab-panel active">
             <div class="home-scroller">
-                <div class="ticker-grid" id="top-ticker-target">
+                <div class="ticker-grid">
                     <div class="ticker-card" onclick="redirectAssetToChart('BTC')">
                         <div class="ticker-flex"><span class="ticker-title">BTC / USD</span><span class="ticker-change" style="color:#f6465d;">-0.11%</span></div>
                         <div class="ticker-price" style="color:#f6465d;">$79,025.35</div>
@@ -139,7 +135,7 @@ dashboard_html = """
 
         <div id="chart-ui" class="tab-panel">
             <div class="search-container">
-                <input type="text" id="asset-search" class="search-bar" value="BTC" placeholder="Symbol...">
+                <input type="text" id="asset-search" class="search-bar" value="BTC" placeholder="E.g., BTC, ETH, SOL...">
                 <button class="search-trigger" onclick="renderTradingCore()">Search</button>
             </div>
             <div class="screen-layout">
@@ -170,7 +166,7 @@ dashboard_html = """
         </div>
 
         <div id="news-ui" class="tab-panel">
-            <div class="news-wrapper" id="news-target-feed">
+            <div class="news-wrapper">
                 <div class="news-card"><span class="news-impact-tag">HIGH IMPACT</span><div class="news-title">🚨 Macro Liquidity Sweep: High impact order volume detected under Bitcoin structural support cluster.</div><div class="news-time">Just now</div></div>
                 <div class="news-card"><span class="news-impact-tag">CRITICAL RISK</span><div class="news-title">📊 Whales Distribution Cycle: Massive stablecoin inflows recorded into derivatives spot orderbooks.</div><div class="news-time">12m ago</div></div>
                 <div class="news-card"><span class="news-impact-tag">HIGH IMPACT</span><div class="news-title">📈 AI Predictive Matrix: Volatility metrics indicate an imminent buy-side short squeeze channel.</div><div class="news-time">45m ago</div></div>
@@ -271,5 +267,5 @@ dashboard_html = """
 </html>
 """
 
-# Direct structural injection with zero text replace dependencies 
-st.components.v1.html(dashboard_html, height=620, scrolling=False)
+# Executing layout safely without markdown overheads or custom wrapper dependencies
+st.components.v1.html(dashboard_html, height=650, scrolling=False)
