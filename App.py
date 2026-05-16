@@ -185,46 +185,56 @@
             // Sabhi contents ko hide karein
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
-            });
-            // Sabhi nav items se active class hatayein
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
+import streamlit as st
 
-            // Target tab ko show karein
+# Pura HTML, CSS aur JS code ek bade string variable me daalein
+dashboard_html = """
+<!DOCTYPE html>
+<html lang="en" data-theme="system">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Dashboard</title>
+    <style>
+        /* Yahan saara CSS code aayega... */
+        :root[data-theme="light"] { --bg-color: #f4f6f9; --text-color: #333333; }
+        :root[data-theme="dark"] { --bg-color: #121212; --text-color: #ffffff; }
+        body { background-color: var(--bg-color); color: var(--text-color); }
+        .navbar { display: flex; justify-content: space-around; background: #007bff; padding: 10px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div onclick="switchTab('home-tab')">🏠 Home</div>
+        <div onclick="switchTab('settings-tab')">⚙️ Settings</div>
+    </div>
+
+    <div id="home-tab" class="tab-content active">
+        <h2>All Coins</h2>
+        <p>Bitcoin (BTC) - $64,500</p>
+    </div>
+
+    <div id="settings-tab" class="tab-content">
+        <h2>Settings</h2>
+        <button onclick="location.reload()">🔄 Rerun</button>
+        <select onchange="document.documentElement.setAttribute('data-theme', this.value)">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+        </select>
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            
-            // Clicked nav item ko active dikhayein
-            if(tabId === 'home-tab') {
-                document.querySelectorAll('.nav-item')[0].classList.add('active');
-            } else {
-                document.querySelectorAll('.nav-item')[1].classList.add('active');
-            }
-        }
-
-        // 2. Rerun Functionality
-        function rerunApp() {
-            alert("Re-running data fetching process...");
-            // Yahan aap apna data reload karne ka function daal sakte hain
-            // jaise: fetchCoinsData();
-            location.reload(); // Temporary page refresh ke liye
-        }
-
-        // 3. Theme Changing Logic (Light, Dark, System)
-        function changeTheme(themeValue) {
-            const root = document.documentElement;
-            root.setAttribute('data-theme', themeValue);
-            
-            // Preference ko save karne ke liye (Optional)
-            localStorage.setItem('selected-theme', themeValue);
-        }
-
-        // Page load hote hi purani saved theme apply karne ke liye
-        window.onload = function() {
-            const savedTheme = localStorage.getItem('selected-theme') || 'system';
-            document.getElementById('theme-select').value = savedTheme;
-            changeTheme(savedTheme);
         }
     </script>
 </body>
 </html>
+"""
+
+# Streamlit me is HTML ko render karne ke liye yeh line use karein:
+st.components.v1.html(dashboard_html, height=600, scrolling=True)
