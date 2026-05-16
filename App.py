@@ -14,11 +14,10 @@ coins_list_data = [
     {"symbol": "PARTIUSD", "desc": "Particle Network Perpetual", "price": "$0.06232", "vol": "$283.91K", "change": "+3.57%", "status": "up"}
 ]
 
-# JSON format me convert kiya taaki f-string ki zarurat na pade
 top_cards_json = json.dumps(top_cards_data)
 coins_list_json = json.dumps(coins_list_data)
 
-# --- 2. MULTI-LINE HTML STRING (WITHOUT F-STRING BUGS) ---
+# --- 2. CLEAN HIGH-PERFORMANCE INTERFACE HTML ---
 dashboard_html = """
 <!DOCTYPE html>
 <html lang="en">
@@ -35,7 +34,7 @@ dashboard_html = """
             overflow-x: hidden;
         }
 
-        /* Navbar Layout */
+        /* Top Bar Navigation */
         .top-navbar {
             position: sticky; top: 0; background-color: #15171c;
             border-bottom: 1px solid #212630; display: flex;
@@ -52,7 +51,7 @@ dashboard_html = """
         .tab-panel { display: none; }
         .tab-panel.active { display: block; }
 
-        /* Home View Styles */
+        /* Home View Layout */
         .ticker-row { display: flex; gap: 8px; margin-bottom: 12px; }
         .ticker-card {
             background: #15171c; border: 1px solid #212630;
@@ -72,7 +71,7 @@ dashboard_html = """
             color: #fff; min-width: 65px; text-align: center; background-color: #0ecb81;
         }
 
-        /* Dynamic Search Tools */
+        /* Search Layout Header */
         .search-container { display: flex; gap: 6px; margin-bottom: 10px; }
         .search-bar {
             flex-grow: 1; padding: 10px; background: #15171c;
@@ -80,25 +79,23 @@ dashboard_html = """
         }
         .search-trigger { background: #7047eb; border: none; color: white; padding: 0 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
-        /* Control Toggles Bar */
+        /* Full Screen Trigger Control Block */
         .panel-top-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 8px; background: rgba(255,255,255,0.02); padding: 8px; border-radius: 6px;
+            display: flex; justify-content: flex-end; align-items: center;
+            margin-bottom: 8px;
         }
-        .indicator-labels { display: flex; gap: 12px; font-size: 12px; font-weight: 500; }
-        .indicator-labels label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
         .fs-action {
-            background: #212630; border: 1px solid #808a9d; color: #fff; font-size: 11px;
-            padding: 5px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s;
+            background: #7047eb; border: none; color: #fff; font-size: 12px;
+            padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: bold;
         }
 
-        /* Layout Architecture */
+        /* Responsive Layout Matrix */
         .screen-layout { display: flex; flex-direction: column; gap: 10px; width: 100%; }
         .chart-box { width: 100%; height: 340px; background: #15171c; border: 1px solid #212630; border-radius: 8px; overflow: hidden; }
         
-        /* AI Box Panel */
+        /* AI Interface Box */
         .ai-exchange-box {
-            width: 100%; height: 260px; background: #15171c; 
+            width: 100%; height: 250px; background: #15171c; 
             border: 1px solid #212630; border-radius: 8px; padding: 12px;
             box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;
         }
@@ -111,21 +108,43 @@ dashboard_html = """
         .ai-report-line { margin-bottom: 4px; border-bottom: 1px dashed #212630; padding-bottom: 3px; }
         .ai-highlight { color: #f0a500; font-weight: bold; }
 
-        /* Input Chat Fields (Fully Typing Enabled) */
+        /* User Query Chat fields */
         .chat-input-bar { display: flex; gap: 6px; border-top: 1px solid #212630; padding-top: 8px; }
         .chat-field {
             flex-grow: 1; padding: 8px 12px; background: #0b0c10;
-            border: 1px solid #212630; border-radius: 6px; color: #ffffff; font-size: 13px;
-            outline: none;
+            border: 1px solid #212630; border-radius: 6px; color: #ffffff; font-size: 13px; outline: none;
         }
         .chat-btn { background: #7047eb; border: none; color: #fff; padding: 0 14px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
-        /* Fullscreen Custom Hide Triggers */
-        body.fullscreen-active .ai-exchange-box { display: none !important; }
-        body.fullscreen-active .chart-box { height: 560px !important; }
+        /* Floating Back/Normal View Button for Pure Fullscreen Mode */
+        .floating-exit-btn {
+            display: none; position: fixed; top: 10px; right: 10px; z-index: 99999;
+            background: rgba(112, 71, 235, 0.9); border: none; color: white;
+            padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer;
+        }
+
+        /* ================= DEEP STRETCH IMMERSIVE FULLSCREEN MODE ================= */
+        body.fullscreen-active .top-navbar,
+        body.fullscreen-active .search-container,
+        body.fullscreen-active .panel-top-bar,
+        body.fullscreen-active .ai-exchange-box {
+            display: none !important; /* Hides everything else instantly */
+        }
+        body.fullscreen-active .container {
+            padding: 0 !important; margin: 0 !important;
+        }
+        body.fullscreen-active .chart-box {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh !important;
+            border: none; border-radius: 0; z-index: 9999;
+        }
+        body.fullscreen-active .floating-exit-btn {
+            display: block !important; /* Shows exit trigger on top corner of the blank chart */
+        }
     </style>
 </head>
 <body>
+
+    <button class="floating-exit-btn" onclick="switchViewMode()">📉 Normal View</button>
 
     <div class="top-navbar">
         <div class="nav-link" id="btn-home" onclick="tabEngine('home-ui', 'btn-home')">
@@ -152,11 +171,7 @@ dashboard_html = """
             </div>
 
             <div class="panel-top-bar">
-                <div class="indicator-labels">
-                    <label><input type="checkbox" id="ind-ema" onchange="renderTradingCore()"> EMA</label>
-                    <label><input type="checkbox" id="ind-vol" checked onchange="renderTradingCore()"> VOL</label>
-                </div>
-                <button id="fs-toggle-btn" class="fs-action" onclick="switchViewMode()">🔍 Full Screen Mode</button>
+                <button class="fs-action" onclick="switchViewMode()">🔍 Full Chart Mode</button>
             </div>
 
             <div class="screen-layout" id="layout-box">
@@ -168,7 +183,7 @@ dashboard_html = """
                             <span style="color:#7047eb;">📊 Real-time AI Quant Insights</span>
                             <span id="ai-status-tag" class="ai-badge">ANALYZING</span>
                         </div>
-                        <div id="ai-logs-frame" class="ai-output-logs">Loading markets...</div>
+                        <div id="ai-logs-frame" class="ai-output-logs">Parsing multi-timeframe candle profiles...</div>
                     </div>
 
                     <div class="chat-input-bar">
@@ -181,7 +196,6 @@ dashboard_html = """
     </div>
 
     <script>
-        // Data injected via DOM instead of unsafe f-strings
         const rawTickers = ##TOP_TICKERS##;
         const rawCoins = ##COINS_LIST##;
 
@@ -201,11 +215,6 @@ dashboard_html = """
         function loadTvWidget(coin) {
             const target = document.getElementById('tv-widget-frame');
             target.innerHTML = "";
-            const emaActive = document.getElementById('ind-ema').checked;
-            const volActive = document.getElementById('ind-vol').checked;
-            const studies = [];
-            if(emaActive) studies.push("MAExp@tv-basicstudies");
-            if(volActive) studies.push("Volume@tv-basicstudies");
 
             const script = document.createElement('script');
             script.src = 'https://s3.tradingview.com/tv.js';
@@ -218,17 +227,14 @@ dashboard_html = """
                     "interval": "60", "theme": "dark", "style": "1", "locale": "en",
                     "hide_side_toolbar": false, "allow_symbol_change": false,
                     "container_id": "tv-widget-frame",
-                    "studies": studies
+                    "studies": ["MAExp@tv-basicstudies", "Volume@tv-basicstudies"]
                 });
             };
             document.head.appendChild(script);
         }
 
         function switchViewMode() {
-            const body = document.body;
-            const btn = document.getElementById('fs-toggle-btn');
-            body.classList.toggle('fullscreen-active');
-            btn.innerText = body.classList.contains('fullscreen-active') ? "📉 Normal View" : "🔍 Full Screen Mode";
+            document.body.classList.toggle('fullscreen-active');
             let coin = document.getElementById('asset-search').value.toUpperCase().trim() || "BTC";
             loadTvWidget(coin);
         }
@@ -285,7 +291,7 @@ dashboard_html = """
 </html>
 """
 
-# Dynamic Safe Replacement Layer without crashing Python
+# Safe DOM Dynamic Injections
 dashboard_html = dashboard_html.replace("##TOP_TICKERS##", top_cards_json)
 dashboard_html = dashboard_html.replace("##COINS_LIST##", coins_list_json)
 
