@@ -143,4 +143,4 @@ if not st.session_state.fullscreen_mode:
     st.markdown("<br>", unsafe_html=True)
     st.info(f"⚡ **System Core Sync:** Live trading matrix active for **{asset_symbol}**. Sub-modules working fine.")
     st.text_input("Ask System AI", key="quant_system_prompt", placeholder="Ask me anything about current chart indicators...", label_visibility="collapsed")
-  
+    
