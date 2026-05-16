@@ -17,7 +17,7 @@ coins_list_data = [
 top_cards_json = json.dumps(top_cards_data)
 coins_list_json = json.dumps(coins_list_data)
 
-# --- 2. 100% RESPONSIVE VIEWPORT ENGINE ---
+# --- 2. THE ABSOLUTE FLUID GEOMETRY INTERFACE ---
 dashboard_html = """
 <!DOCTYPE html>
 <html lang="en">
@@ -26,7 +26,6 @@ dashboard_html = """
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Delta Style Mobile Terminal</title>
     <style>
-        /* Force strictly immutable viewport dimensions */
         html, body {
             background-color: #0b0c10;
             color: #ffffff;
@@ -37,7 +36,6 @@ dashboard_html = """
             position: fixed;
         }
 
-        /* Navigation Menu Header */
         .top-navbar {
             background-color: #15171c;
             border-bottom: 1px solid #212630; display: flex;
@@ -50,7 +48,6 @@ dashboard_html = """
         .nav-link.active { color: #7047eb; font-weight: bold; }
         .nav-icon { font-size: 13px; margin-bottom: 1px; }
 
-        /* Responsive Layout Frame */
         .container { 
             padding: 8px; 
             height: calc(100% - 38px); 
@@ -60,101 +57,48 @@ dashboard_html = """
         .tab-panel { display: none; height: 100%; width: 100%; }
         .tab-panel.active { display: flex; flex-direction: column; height: 100%; }
 
-        /* Home View Layout Elements */
-        .home-scroller {
-            overflow-y: auto; height: 100%; width: 100%;
-        }
+        .home-scroller { overflow-y: auto; height: 100%; width: 100%; }
         .ticker-row { display: flex; gap: 6px; margin-bottom: 8px; }
-        .ticker-card {
-            background: #15171c; border: 1px solid #212630;
-            border-radius: 6px; padding: 6px; flex: 1;
-        }
+        .ticker-card { background: #15171c; border: 1px solid #212630; border-radius: 6px; padding: 6px; flex: 1; }
         .ticker-title { font-size: 10px; color: #808a9d; }
         .ticker-price { font-size: 14px; font-weight: bold; margin-top: 1px; }
         .list-caption { display: flex; justify-content: space-between; color: #808a9d; font-size: 10px; padding: 4px; }
-        .coin-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 8px 4px; border-bottom: 1px solid #212630;
-        }
+        .coin-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 4px; border-bottom: 1px solid #212630; }
         .coin-name { font-weight: bold; font-size: 12px; }
         .coin-sub { color: #808a9d; font-size: 10px; }
-        .coin-badge {
-            padding: 4px 6px; border-radius: 4px; font-weight: bold; font-size: 11px;
-            color: #fff; min-width: 55px; text-align: center; background-color: #0ecb81;
-        }
+        .coin-badge { padding: 4px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; color: #fff; min-width: 55px; text-align: center; background-color: #0ecb81; }
 
-        /* Search Layout Headers */
         .search-container { display: flex; gap: 4px; margin-bottom: 6px; height: 32px; flex-shrink: 0; }
-        .search-bar {
-            flex-grow: 1; padding: 0 8px; background: #15171c;
-            border: 1px solid #212630; border-radius: 6px; color: #fff; font-weight: bold; font-size: 12px;
-        }
+        .search-bar { flex-grow: 1; padding: 0 8px; background: #15171c; border: 1px solid #212630; border-radius: 6px; color: #fff; font-weight: bold; font-size: 12px; }
         .search-trigger { background: #7047eb; border: none; color: white; padding: 0 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
-        .panel-top-bar {
-            display: flex; justify-content: flex-end; align-items: center; margin-bottom: 4px; flex-shrink: 0;
-        }
-        .fs-action {
-            background: #212630; border: 1px solid #363c4e; color: #fff; font-size: 11px;
-            padding: 3px 8px; border-radius: 4px; cursor: pointer; font-weight: bold;
-        }
+        .panel-top-bar { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 4px; flex-shrink: 0; }
+        .fs-action { background: #212630; border: 1px solid #363c4e; color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-        /* Layout Grid Stack */
-        .screen-layout { 
-            display: flex; flex-direction: column; gap: 6px; 
-            flex-grow: 1; height: calc(100% - 46px); box-sizing: border-box; overflow: hidden;
-        }
-        .chart-box { 
-            width: 100%; height: 55%;
-            background: #15171c; border: 1px solid #212630; border-radius: 6px; overflow: hidden; box-sizing: border-box;
-        }
+        .screen-layout { display: flex; flex-direction: column; gap: 6px; flex-grow: 1; height: calc(100% - 46px); box-sizing: border-box; overflow: hidden; }
+        .chart-box { width: 100%; height: 55%; background: #15171c; border: 1px solid #212630; border-radius: 6px; overflow: hidden; box-sizing: border-box; }
         
-        /* AI Interface Box */
-        .ai-exchange-box {
-            width: 100%; height: 45%; background: #15171c; 
-            border: 1px solid #212630; border-radius: 6px; padding: 8px;
-            box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;
-            overflow: hidden;
-        }
+        .ai-exchange-box { width: 100%; height: 45%; background: #15171c; border: 1px solid #212630; border-radius: 6px; padding: 8px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
         .ai-header-panel { display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 2px; }
         .ai-badge { padding: 1px 4px; border-radius: 3px; font-size: 9px; color: #fff; background-color: #0ecb81; }
-        .ai-output-logs { 
-            font-size: 11px; color: #e1e4e8; line-height: 1.35; overflow-y: auto; flex-grow: 1; margin-bottom: 4px;
-            background: #101114; padding: 6px; border-radius: 4px; border: 1px solid #1f2226;
-        }
+        .ai-output-logs { font-size: 11px; color: #e1e4e8; line-height: 1.35; overflow-y: auto; flex-grow: 1; margin-bottom: 4px; background: #101114; padding: 6px; border-radius: 4px; border: 1px solid #1f2226; }
         .ai-report-line { margin-bottom: 2px; border-bottom: 1px dashed #212630; padding-bottom: 1px; }
         .ai-highlight { color: #f0a500; font-weight: bold; }
 
-        /* Custom Dynamic Chat Fields */
         .chat-input-bar { display: flex; gap: 4px; border-top: 1px solid #212630; padding-top: 4px; height: 28px; flex-shrink: 0; }
-        .chat-field {
-            flex-grow: 1; padding: 0 8px; background: #0b0c10;
-            border: 1px solid #212630; border-radius: 4px; color: #ffffff; font-size: 11px; outline: none;
-        }
+        .chat-field { flex-grow: 1; padding: 0 8px; background: #0b0c10; border: 1px solid #212630; border-radius: 4px; color: #ffffff; font-size: 11px; outline: none; }
         .chat-btn { background: #7047eb; border: none; color: #fff; padding: 0 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
-        /* Floating Absolute back control trigger */
-        .floating-exit-btn {
-            display: none; position: fixed; top: 6px; right: 6px; z-index: 999999;
-            background: rgba(112, 71, 235, 0.95); border: none; color: white;
-            padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer;
-        }
+        .floating-exit-btn { display: none; position: fixed; top: 6px; right: 6px; z-index: 999999; background: rgba(112, 71, 235, 0.95); border: none; color: white; padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; }
 
-        /* ================= IMMERSIVE VIEWPORT LOCK (FULL CHART) ================= */
+        /* Fullscreen View Overrides */
         body.fullscreen-active .top-navbar,
         body.fullscreen-active .search-container,
         body.fullscreen-active .panel-top-bar,
-        body.fullscreen-active .ai-exchange-box {
-            display: none !important;
-        }
-        body.fullscreen-active .container {
-            padding: 0 !important; margin: 0 !important; height: 100% !important; width: 100% !important;
-        }
+        body.fullscreen-active .ai-exchange-box { display: none !important; }
+        body.fullscreen-active .container { padding: 0 !important; margin: 0 !important; height: 100% !important; width: 100% !important; }
         body.fullscreen-active .screen-layout { height: 100% !important; gap: 0 !important; }
-        body.fullscreen-active .chart-box {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100% !important;
-            border: none; border-radius: 0; z-index: 99999;
-        }
+        body.fullscreen-active .chart-box { position: absolute; top: 0; left: 0; width: 100%; height: 100% !important; border: none; border-radius: 0; z-index: 99999; }
         body.fullscreen-active .floating-exit-btn { display: block !important; }
     </style>
 </head>
@@ -205,7 +149,7 @@ dashboard_html = """
                     </div>
 
                     <div class="chat-input-bar">
-                        <input type="text" id="user-prompt" class="chat-field" placeholder="Ask AI: Market me kya chal raha hai?">
+                        <input type="text" id="user-prompt" class="chat-field" placeholder="Ask AI: Entry kaha banau bullish ya bearish?">
                         <button class="chat-btn" onclick="fireQuery()">Ask</button>
                     </div>
                 </div>
@@ -218,19 +162,18 @@ dashboard_html = """
         const rawCoins = ##COINS_LIST##;
 
         function generateDetailedAnalysis(coin, status) {
-            let rsi = status === "BULLISH" ? Math.floor(Math.random() * 15) + 55 : Math.floor(Math.random() * 15) + 35;
+            let rsi = status === "BULLISH" ? Math.floor(Math.random() * 10) + 62 : Math.floor(Math.random() * 10) + 38;
             return `
                 <div class="ai-report-line">🌐 <b>Asset:</b> <span class="ai-highlight">${coin}USDT</span></div>
                 <div class="ai-report-line">📈 <b>Vector:</b> ${status === "BULLISH" ? '<span style="color:#0ecb81; font-weight:bold;">Bullish Structure</span>' : '<span style="color:#f6465d; font-weight:bold;">Distribution</span>'}</div>
                 <div class="ai-report-line">🔢 <b>RSI Index:</b> <span class="ai-highlight">${rsi}</span></div>
-                <div class="ai-report-line">💡 <b>AI Bias:</b> ${status === "BULLISH" ? 'Accumulate blocks.' : 'Wait for breakdown.'}</div>
+                <div class="ai-report-line">💡 <b>AI Bias:</b> ${status === "BULLISH" ? 'Buy setups active on minor pullbacks.' : 'Avoid long entry, sell pressure intense.'}</div>
             `;
         }
 
         function loadTvWidget(coin) {
             const target = document.getElementById('tv-widget-frame');
             target.innerHTML = "";
-
             const script = document.createElement('script');
             script.src = 'https://s3.tradingview.com/tv.js';
             script.type = 'text/javascript';
@@ -270,20 +213,48 @@ dashboard_html = """
 
         function fireQuery() {
             const promptBox = document.getElementById('user-prompt');
-            const val = promptBox.value.trim();
+            const val = promptBox.value.trim().toLowerCase();
             if(!val) return;
 
             let coin = document.getElementById('asset-search').value.toUpperCase().trim() || "BTC";
             const logBox = document.getElementById('ai-logs-frame');
-            logBox.innerHTML = "⏳ <i>AI is scanning...</i>";
+            logBox.innerHTML = "⏳ <i>AI processing smart order blocks...</i>";
             
             setTimeout(function() {
+                let aiResponse = "";
+                
+                // Dynamic Intelligence Parser Engine based on User Query Context
+                if (val.includes("entry") || val.includes("kaha banau") || val.includes("tread") || val.includes("trade")) {
+                    if (val.includes("brish") || val.includes("bearish")) {
+                        aiResponse = `
+                            <div class="ai-report-line" style="color: #f6465d; font-weight: bold;">🚨 Bearish Trade Setup Selected</div>
+                            <div class="ai-report-line">🛑 <b>Short Entry Zone:</b> Break below local VWAP support block.</div>
+                            <div class="ai-report-line">🎯 <b>Targets:</b> Support Block-1 & Fib extension 0.618</div>
+                            <div class="ai-report-line">🛡️ <b>Stop-Loss:</b> Previous 1H swing swing high matrix level.</div>
+                        `;
+                    } else {
+                        // Default to Bullish or general entry guidance
+                        aiResponse = `
+                            <div class="ai-report-line" style="color: #0ecb81; font-weight: bold;">✅ Bullish Setup Confirmed</div>
+                            <div class="ai-report-line">🟢 <b>Long Entry Optimal Level:</b> Wait for a minor retracement to Order Block demand pool.</div>
+                            <div class="ai-report-line">🎯 <b>Take-Profit Targets:</b> Next liquidity pocket resistance lines.</div>
+                            <div class="ai-report-line">🛡️ <b>Invalidation (SL):</b> Structural close below current session low.</div>
+                        `;
+                    }
+                } else if (val.includes("bullish")) {
+                    aiResponse = `<div class="ai-report-line">🤖 <b>AI Bias:</b> Aggressive buy side accumulation detected on <span class="ai-highlight">${coin}</span>. Momentum favors Long configurations.</div>`;
+                } else if (val.includes("bearish") || val.includes("brish")) {
+                    aiResponse = `<div class="ai-report-line">🤖 <b>AI Bias:</b> Order distribution phase active for <span class="ai-highlight">${coin}</span>. Sell blocks are heavily defended.</div>`;
+                } else {
+                    aiResponse = `<div class="ai-report-line">🤖 <b>AI Core Response:</b> Structure on <span class="ai-highlight">${coin}</span> shows strong limit order absorption. Overhead resistance is soft, matrix stable.</div>`;
+                }
+
                 logBox.innerHTML = `
-                    <div class="ai-report-line" style="color: #7047eb; font-weight: bold;">💬 Ask: "${val}"</div>
-                    <div class="ai-report-line">🤖 <b>AI:</b> Orderbooks for <span class="ai-highlight">${coin}</span> show solid absorption at key blocks. Matrix holds stable.</div>
+                    <div class="ai-report-line" style="color: #7047eb; font-weight: bold;">💬 User Request: "${promptBox.value}"</div>
+                    ${aiResponse}
                 `;
                 promptBox.value = "";
-            }, 500);
+            }, 450);
         }
 
         function tabEngine(panelId, btnId) {
@@ -307,5 +278,4 @@ dashboard_html = """
 dashboard_html = dashboard_html.replace("##TOP_TICKERS##", top_cards_json)
 dashboard_html = dashboard_html.replace("##COINS_LIST##", coins_list_json)
 
-# Height configured to 100% viewport simulation matching standard mobile devices
 st.components.v1.html(dashboard_html, height=580, scrolling=False)
