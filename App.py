@@ -10,8 +10,7 @@ top_cards_data = [
 coins_list_data = [
     {"symbol": "ARCUSD", "desc": "AI Rig Complex Perpetual", "price": "$0.07554", "vol": "$2.49M", "change": "+34.03%", "status": "up"},
     {"symbol": "FFUSD", "desc": "Falcon Finance Perpetual", "price": "$0.0851", "vol": "$4.97M", "change": "+7.31%", "status": "up"},
-    {"symbol": "BEATUSD", "desc": "Audiera Perpetual", "price": "$0.6202", "vol": "$1.32M", "change": "+5.62%", "status": "up"},
-    {"symbol": "PARTIUSD", "desc": "Particle Network Perpetual", "price": "$0.06232", "vol": "$283.91K", "change": "+3.57%", "status": "up"}
+    {"symbol": "BEATUSD", "desc": "Audiera Perpetual", "price": "$0.6202", "vol": "$1.32M", "change": "+5.62%", "status": "up"}
 ]
 
 top_cards_json = json.dumps(top_cards_data)
@@ -25,120 +24,101 @@ dashboard_html = f"""
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Pro Dashboard</title>
+    <title>Crypto Ultimate AI Dashboard</title>
     <style>
         :root[data-theme="dark"] {{
-            --bg-color: #121318;
-            --text-color: #ffffff;
-            --text-secondary: #848e9c;
-            --card-bg: #1e2026;
-            --nav-bg: #16181d;
-            --nav-active: #f0a500;
-            --green: #0ecb81;
-            --red: #f6465d;
-            --orange: #ff9800;
-            --border-color: #2b2f36;
-            --modal-overlay: rgba(0,0,0,0.8);
+            --bg-color: #121318; --text-color: #ffffff; --text-secondary: #848e9c;
+            --card-bg: #1e2026; --nav-bg: #16181d; --nav-active: #f0a500;
+            --green: #0ecb81; --red: #f6465d; --orange: #ff9800; --border-color: #2b2f36;
         }}
         :root[data-theme="light"] {{
-            --bg-color: #f8f9fa;
-            --text-color: #000000;
-            --text-secondary: #5e6673;
-            --card-bg: #ffffff;
-            --nav-bg: #ffffff;
-            --nav-active: #007bff;
-            --green: #03a66d;
-            --red: #cf304a;
-            --orange: #e65100;
-            --border-color: #e6e8ea;
-            --modal-overlay: rgba(0,0,0,0.5);
+            --bg-color: #f8f9fa; --text-color: #000000; --text-secondary: #5e6673;
+            --card-bg: #ffffff; --nav-bg: #ffffff; --nav-active: #007bff;
+            --green: #03a66d; --red: #cf304a; --orange: #e65100; --border-color: #e6e8ea;
         }}
 
         body {{
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0; padding: 0;
-            transition: all 0.3s ease;
+            background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0;
+            transition: all 0.3s ease; overflow-x: hidden;
         }}
 
-        /* ================= NAVIGATION BAR ON TOP ================= */
+        /* Navbar Top */
         .navbar {{
-            position: sticky; top: 0; left: 0; right: 0;
-            background-color: var(--nav-bg); border-bottom: 1px solid var(--border-color);
-            display: flex; justify-content: space-around; padding: 10px 0; z-index: 100;
+            position: sticky; top: 0; left: 0; right: 0; background-color: var(--nav-bg);
+            border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-around;
+            padding: 10px 0; z-index: 100;
         }}
-        .nav-item {{ text-align: center; font-size: 11px; color: var(--text-secondary); cursor: pointer; flex: 1; padding: 4px 0; }}
+        .nav-item {{ text-align: center; font-size: 11px; color: var(--text-secondary); cursor: pointer; flex: 1; }}
         .nav-item.active {{ color: var(--nav-active); font-weight: bold; border-bottom: 2px solid var(--nav-active); }}
-        .nav-icon {{ font-size: 16px; margin-bottom: 1px; }}
+        .nav-icon {{ font-size: 16px; }}
 
-        /* Main Container */
-        .container {{ padding: 16px; max-width: 500px; margin: 0 auto; }}
+        .container {{ padding: 12px; max-width: 1200px; margin: 0 auto; }}
         .tab-content {{ display: none; }}
         .tab-content.active {{ display: block; }}
 
-        /* Home Layout */
-        .top-cards-grid {{ display: flex; gap: 12px; margin-bottom: 20px; }}
+        /* Home Style */
+        .top-cards-grid {{ display: flex; gap: 12px; margin-bottom: 15px; }}
         .crypto-card {{ background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; flex: 1; }}
-        .card-header {{ display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; }}
-        .card-price {{ font-size: 18px; font-weight: bold; margin-top: 6px; }}
+        .card-header {{ display: flex; justify-content: space-between; font-size: 12px; }}
+        .card-price {{ font-size: 18px; font-weight: bold; margin-top: 4px; }}
         .list-header {{ display: flex; justify-content: space-between; color: var(--text-secondary); font-size: 11px; padding: 8px 4px; border-bottom: 1px solid var(--border-color); }}
         .coin-row {{ display: flex; justify-content: space-between; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--border-color); }}
-        .coin-symbol {{ font-weight: bold; font-size: 15px; }}
-        .coin-desc {{ color: var(--text-secondary); font-size: 11px; margin-top: 2px; }}
-        .coin-price-block {{ text-align: right; flex-grow: 1; margin-right: 15px; }}
-        .coin-price {{ font-weight: bold; font-size: 14px; }}
-        .coin-vol {{ color: var(--text-secondary); font-size: 11px; margin-top: 2px; }}
-        .badge {{ padding: 6px 10px; border-radius: 4px; font-weight: bold; font-size: 13px; min-width: 65px; text-align: center; color: white; }}
-        .bg-up {{ background-color: var(--green); }}
-        .bg-down {{ background-color: var(--red); }}
-        .text-up {{ color: var(--green); }}
-        .text-down {{ color: var(--red); }}
+        .coin-symbol {{ font-weight: bold; }}
+        .badge {{ padding: 6px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; color: white; min-width: 60px; text-align: center; }}
+        .bg-up {{ background-color: var(--green); }} .bg-down {{ background-color: var(--red); }}
+        .text-up {{ color: var(--green); }} .text-down {{ color: var(--red); }}
 
-        /* News Layout */
-        .news-heading-box {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: relative; }}
-        .menu-container {{ position: relative; display: inline-block; }}
-        .three-dot-btn {{ font-size: 22px; cursor: pointer; color: var(--text-color); padding: 0 10px; }}
-        .dropdown-menu {{ display: none; position: absolute; right: 0; top: 25px; background-color: var(--card-bg); min-width: 130px; box-shadow: 0px 8px 16px rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 8px; z-index: 200; }}
-        .dropdown-menu div {{ color: var(--text-color); padding: 10px 14px; font-size: 13px; text-align: left; cursor: pointer; }}
-        .dropdown-menu div:hover {{ background-color: rgba(255,255,255,0.08); color: var(--nav-active); }}
+        /* 3 Dot Language Menu */
+        .news-heading-box {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }}
+        .menu-container {{ position: relative; }}
+        .three-dot-btn {{ font-size: 22px; cursor: pointer; padding: 0 10px; }}
+        .dropdown-menu {{ display: none; position: absolute; right: 0; top: 25px; background-color: var(--card-bg); min-width: 120px; border: 1px solid var(--border-color); border-radius: 8px; z-index: 200; }}
+        .dropdown-menu div {{ color: var(--text-color); padding: 8px 12px; font-size: 13px; cursor: pointer; }}
+        .dropdown-menu div:hover {{ background: rgba(255,255,255,0.08); color: var(--nav-active); }}
         .dropdown-menu div.selected {{ color: var(--nav-active); font-weight: bold; }}
         .dropdown-menu.show {{ display: block; }}
-        .news-card {{ background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 14px; cursor: pointer; }}
-        .news-meta {{ display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 8px; }}
-        .news-time {{ color: var(--text-secondary); }}
-        .impact-badge {{ padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 10px; color: white; }}
-        .impact-high {{ background-color: var(--orange); }}
-        .impact-bullish {{ background-color: var(--green); }}
-        .impact-bearish {{ background-color: var(--red); }}
-        .news-title {{ font-size: 14px; font-weight: bold; line-height: 1.4; margin-bottom: 6px; }}
-        .news-summary {{ font-size: 12px; color: var(--text-secondary); line-height: 1.5; }}
+        .news-card {{ background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 12px; cursor: pointer; }}
 
-        /* ================= CHART & AI SPLIT UI STYLES ================= */
-        .search-box-container {{ display: flex; gap: 8px; margin-bottom: 15px; }}
+        /* ================= 50:50 HALF SPLIT CHART SCREEN UI ================= */
+        .search-box-container {{ display: flex; gap: 8px; margin-bottom: 12px; }}
         .search-input {{ flex-grow: 1; padding: 10px; border-radius: 6px; background-color: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); font-weight: bold; }}
-        .search-btn {{ background-color: var(--nav-active); color: black; border: none; padding: 0 16px; border-radius: 6px; font-weight: bold; cursor: pointer; }}
+        .search-btn {{ background-color: var(--nav-active); color: black; border: none; padding: 0 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }}
         
-        .chart-ai-row {{ display: flex; flex-direction: column; gap: 14px; }}
-        .chart-wrapper {{ background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; height: 300px; overflow: hidden; }}
-        
-        /* AI Prediction Panel Style */
-        .ai-analysis-card {{ background-color: var(--card-bg); border: 1px solid var(--nav-active); border-radius: 12px; padding: 16px; }}
-        .ai-header {{ display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 14px; margin-bottom: 10px; color: var(--nav-active); }}
-        .ai-direction-badge {{ padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; }}
-        .ai-text-box {{ font-size: 13px; line-height: 1.6; text-align: justify; color: var(--text-color); }}
+        /* Split Grid Structure */
+        .split-grid {{ display: flex; gap: 14px; transition: all 0.3s ease; }}
+        .left-panel {{ flex: 1; min-width: 0; transition: all 0.3s ease; }} /* Chart Window */
+        .right-panel {{ flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }} /* AI Panel */
 
-        /* Modal Styles */
-        .modal {{ display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay); z-index: 1000; justify-content: center; align-items: center; }}
-        .modal-content {{ background-color: var(--card-bg); border: 1px solid var(--border-color); width: 90%; max-width: 440px; border-radius: 16px; padding: 20px; position: relative; }}
-        .close-modal {{ position: absolute; top: 12px; right: 16px; font-size: 24px; cursor: pointer; color: var(--text-secondary); }}
-        .modal-title {{ font-size: 16px; font-weight: bold; margin-bottom: 12px; }}
-        .modal-full-text {{ font-size: 13px; line-height: 1.6; }}
+        /* Chart Header Controls */
+        .chart-header-actions {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }}
+        .indicator-group {{ display: flex; gap: 12px; font-size: 12px; font-weight: bold; }}
+        .indicator-group label {{ display: flex; align-items: center; gap: 4px; cursor: pointer; }}
+        .btn-fullscreen {{ background: rgba(255,255,255,0.08); color: var(--text-color); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: bold; }}
+        .btn-fullscreen:hover {{ border-color: var(--nav-active); color: var(--nav-active); }}
+
+        .chart-wrapper {{ background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; height: 420px; overflow: hidden; }}
+        
+        /* AI Panel & Chatbox UI */
+        .ai-analysis-card {{ background-color: var(--card-bg); border: 1px solid var(--nav-active); border-radius: 12px; padding: 14px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; min-height: 200px; }}
+        .ai-header {{ display: flex; justify-content: space-between; font-weight: bold; font-size: 13px; color: var(--nav-active); margin-bottom: 8px; }}
+        .ai-direction-badge {{ padding: 2px 8px; border-radius: 4px; font-size: 11px; color: white; }}
+        .ai-text-box {{ font-size: 13px; line-height: 1.5; color: var(--text-color); margin-bottom: 10px; overflow-y: auto; max-height: 140px; }}
+        
+        /* Chat Input Window */
+        .ai-chat-container {{ border-top: 1px solid var(--border-color); padding-top: 10px; display: flex; gap: 6px; }}
+        .chat-input {{ flex-grow: 1; padding: 8px; border-radius: 6px; background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); font-size: 12px; }}
+        .chat-send-btn {{ background: var(--nav-active); border: none; color: black; font-weight: bold; border-radius: 6px; padding: 0 12px; cursor: pointer; font-size: 12px; }}
+
+        /* Full Screen States */
+        body.fs-mode .right-panel {{ display: none !important; }}
+        body.fs-mode .left-panel {{ flex: 1 1 100% !important; width: 100% !important; }}
+        body.fs-mode .chart-wrapper {{ height: 550px; }}
 
         /* Settings Style */
-        .setting-card {{ background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 16px; }}
-        .btn {{ background-color: var(--nav-active); color: black; font-weight: bold; border: none; padding: 10px 16px; border-radius: 4px; cursor: pointer; margin-right: 8px; }}
-        .btn-reboot {{ background-color: var(--red); color: white; }}
+        .setting-card {{ background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 12px; }}
+        .btn {{ background-color: var(--nav-active); color: black; font-weight: bold; border: none; padding: 10px 16px; border-radius: 4px; cursor: pointer; }}
+        .btn-reboot {{ background-color: #f6465d; color: white; margin-left: 8px; }}
         select {{ width: 100%; padding: 10px; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; }}
     </style>
 </head>
@@ -146,20 +126,16 @@ dashboard_html = f"""
 
     <div class="navbar">
         <div class="nav-item active" id="nav-home" onclick="switchTab('home-tab', 'nav-home')">
-            <div class="nav-icon">🏠</div>
-            <div>Home</div>
+            <div class="nav-icon">🏠</div><div>Home</div>
         </div>
-        <div class="nav-item" id="nav-news" onclick="switchTab('nav-news', 'nav-news')">
-            <div class="nav-icon">📰</div>
-            <div>News</div>
+        <div class="nav-item" id="nav-news" onclick="switchTab('news-tab', 'nav-news')">
+            <div class="nav-icon">📰</div><div>News</div>
         </div>
         <div class="nav-item" id="nav-chart" onclick="switchTab('chart-tab', 'nav-chart')">
-            <div class="nav-icon">📊</div>
-            <div>Chart</div>
+            <div class="nav-icon">📊</div><div>Chart</div>
         </div>
         <div class="nav-item" id="nav-settings" onclick="switchTab('settings-tab', 'nav-settings')">
-            <div class="nav-icon">⚙️</div>
-            <div>Settings</div>
+            <div class="nav-icon">⚙️</div><div>Settings</div>
         </div>
     </div>
 
@@ -168,14 +144,11 @@ dashboard_html = f"""
         <div id="home-tab" class="tab-content active">
             <div class="top-cards-grid" id="top-cards-container"></div>
             <div class="list-header">
-                <div style="width: 40%;">Contract</div>
-                <div style="width: 35%; text-align: right;">Price / Vol</div>
-                <div style="width: 25%; text-align: right;">24h Chg.</div>
+                <div style="width: 40%;">Contract</div><div style="width: 35%; text-align: right;">Price / Vol</div><div style="width: 25%; text-align: right;">24h Chg.</div>
             </div>
             <div id="coins-list-container"></div>
         </div>
 
-        <div id="nav-news-tab" class="tab-content"> </div>
         <div id="news-tab" class="tab-content">
             <div class="news-heading-box">
                 <h2 style="margin: 0;">Market News</h2>
@@ -193,87 +166,74 @@ dashboard_html = f"""
 
         <div id="chart-tab" class="tab-content">
             <div class="search-box-container">
-                <input type="text" id="chart-search-input" class="search-input" value="BTC" placeholder="Enter Coin Name (e.g. BTC, ETH, SOL)...">
+                <input type="text" id="chart-search-input" class="search-input" value="BTC" placeholder="Search Crypto (e.g. BTC, ETH, SOL)...">
                 <button class="search-btn" onclick="updateChartAndAI()">Search</button>
             </div>
 
-            <div class="chart-ai-row">
-                <div class="chart-wrapper" id="tv-chart-container">
+            <div class="split-grid" id="split-grid-box">
+                
+                <div class="left-panel">
+                    <div class="chart-header-actions">
+                        <div class="indicator-group">
+                            <label><input type="checkbox" id="check-ema" onchange="updateChartAndAI()"> EMA</label>
+                            <label><input type="checkbox" id="check-vol" checked onchange="updateChartAndAI()"> Volume</label>
+                        </div>
+                        <button class="btn-fullscreen" onclick="toggleFullScreen()">🔍 Full Screen</button>
                     </div>
+                    <div class="chart-wrapper" id="tv-chart-container"></div>
+                </div>
 
-                <div class="ai-analysis-card">
-                    <div class="ai-header">
-                        <span>✨ AI Technical Intelligence</span>
-                        <span id="ai-badge" class="ai-direction-badge bg-up">BULLISH</span>
-                    </div>
-                    <div id="ai-analysis-text" class="ai-text-box">
-                        Loading localized automated engine analysis...
+                <div class="right-panel" id="ai-right-panel">
+                    <div class="ai-analysis-card">
+                        <div>
+                            <div class="ai-header">
+                                <span>✨ AI Auto Analysis</span>
+                                <span id="ai-badge" class="ai-direction-badge bg-up">BULLISH</span>
+                            </div>
+                            <div id="ai-analysis-text" class="ai-text-box">Loading...</div>
+                        </div>
+
+                        <div class="ai-chat-container">
+                            <input type="text" id="user-chat-input" class="chat-input" placeholder="AI se poochein: Market me kya chal raha hai?">
+                            <button class="chat-send-btn" onclick="askAIEngine()">Ask</button>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
         <div id="settings-tab" class="tab-content">
-            <h2 style="margin-top:0;">Settings</h2>
+            <h2>Settings</h2>
             <div class="setting-card">
                 <h3>System Controls</h3>
-                <button class="btn" onclick="rerunApp()">🔄 Rerun</button>
-                <button class="btn btn-reboot" onclick="rebootApp()">⚠️ Reboot</button>
-            </div>
-            <div class="setting-card">
-                <h3>Theme Customization</h3>
-                <select id="theme-select" onchange="changeTheme(this.value)">
-                    <option value="dark">🌙 Dark Mode</option>
-                    <option value="light">☀️ Light Mode</option>
-                </select>
+                <button class="btn" onclick="window.location.reload()">🔄 Rerun</button>
+                <button class="btn btn-reboot" onclick="if(confirm('Reboot?')) window.location.reload();">⚠️ Reboot</button>
             </div>
         </div>
 
-    </div>
-
-    <div id="newsModal" class="modal" onclick="closeNewsModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <span class="close-modal" onclick="closeNewsModal()">&times;</span>
-            <div id="modal-meta" style="margin-bottom: 8px;"></div>
-            <div id="modal-title" class="modal-title"></div>
-            <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 12px;">
-            <div id="modal-body" class="modal-full-text"></div>
-        </div>
     </div>
 
     <script>
         const topCardsData = {top_cards_json};
         const coinsListData = {coins_list_json};
 
-        // Multi-Language AI News Database
-        const newsDatabase = {{
-            "en": [
-                {{ "title": "US Federal Reserve Cuts Interest Rates by 0.25%", "summary": "This unexpected decision has injected massive liquidity into crypto assets.", "full": "The US Federal Reserve unexpectedly cut interest rates by 25 basis points today. This expansionary monetary policy has driven institutional investors to move capital out of bonds and inject massive liquidity into digital high-risk assets.", "impact": "HIGH IMPACT", "type": "bullish", "time": "Just now" }},
-                {{ "title": "SEC Approves Options Trading for Ethereum ETFs", "summary": "Institutional investors can now leverage derivative products for Ethereum easily.", "full": "The Securities and Exchange Commission (SEC) has officially greenlit options trading for spot Ethereum ETFs. Experts suggest this move unlocks massive retail and institutional hedging capabilities.", "impact": "BULLISH", "type": "bullish", "time": "20m ago" }}
-            ],
-            "hi": [
-                {{ "title": "अमेरिकी फेडरल रिजर्व ने ब्याज दरों में 0.25% की कटौती की", "summary": "इस अप्रत्याशित फैसले ने क्रिप्टो संपत्तियों में भारी तरलता (Liquidity) ला दी है।", "full": "अमेरिकी फेडरल रिजर्व ने आज अचानक ब्याज दरों में 25 बेसिस पॉइंट की कटौती की घोषणा की है। इस फैसले के बाद संस्थागत निवेशकों ने बॉन्ड से पैसा निकालकर सीधे क्रिप्टो मार्केट में डालना शुरू कर दिया है, जिससे बिटकॉइन ने तेजी दिखाई है।", "impact": "हाई इम्पैक्ट", "type": "bullish", "time": "अभी-अभी" }},
-                {{ "title": "SEC ने एथेरियम ETF के लिए ऑप्शंस ट्रेडिंग को मंजूरी दी", "summary": "बड़े निवेशक अब एथेरियम डेरिवティブ प्रोडक्ट्स का आसानी से फायदा उठा सकते हैं।", "full": "सिक्योरिटीज एंड एक्सचेंज कमीशन (SEC) ने आधिकारिक तौर पर स्पॉट एथेरियम ETF के लिए ऑप्शंस ट्रेडिंग को हरी ਝੰਡੀ दे दी है। विशेषज्ञों का कहना है कि इस फैसले से मार्केट में वॉल्यूम 45% तक बढ़ गया है।", "impact": "तेजी (BULLISH)", "type": "bullish", "time": "20 मिनट पहले" }}
-            ],
-            "pa": [
-                {{ "title": "ਅਮਰੀਕੀ ਫੈਡਰਲ ਰਿਜ਼ਰਵ ਨੇ ਵਿਆਜ ਦਰਾਂ ਵਿੱਚ 0.25% ਦੀ ਕਟੌਤੀ ਕੀਤੀ", "summary": "ਇਸ ਅਚਾਨਕ ਫੈਸਲੇ ਨੇ ਕ੍ਰਿਪਟੋ ਮਾਰਕੀਟ ਵਿੱਚ ਭਾਰੀ ਪੈਸਾ (Liquidity) ਪਹੁੰਚਾਇਆ ਹੈ।", "full": "ਅਮਰੀਕੀ ਫੈਡਰਲ ਰਿਜ਼ਰਵ ਨੇ ਅੱਜ ਅਚਾਨਕ ਵਿਆਜ ਦਰਾਂ ਵਿੱਚ 25 ਬੇਸਿਸ ਪੁਆਇੰਟ ਦੀ ਕਟੌਤੀ ਕਰ ਦਿੱਤੀ ਹੈ। ਇਸ ਫੈਸਲੇ ਕਾਰਨ ਵੱਡੇ ਨਿਵੇਸ਼ਕਾਂ ਨੇ ਬਾਂਡਾਂ ਵਿੱਚੋਂ ਪੈਸਾ ਕੱਢ ਕੇ ਸਿੱਧਾ ਡਿਜੀਟਲ ਸੰਪਤੀਆਂ ਵਿੱਚ ਲਗਾਉਣਾ ਸ਼ੁਰੂ ਕਰ ਦਿੱਤਾ ਹੈ।", "impact": "ਵੱਡਾ ਅਸਰ", "type": "bullish", "time": "ਹੁਣੇ-ਹੁਣੇ" }},
-                {{ "title": "SEC ਨੇ ਐਥੇਰੀਅਮ ETF ਲਈ ਆਪਸ਼ਨ ਟ੍ਰੇਡਿੰਗ ਨੂੰ ਮਨਜ਼ੂਰੀ ਦਿੱਤੀ", "summary": "ਵੱਡੇ ਨਿਵੇਸ਼ਕ ਹੁਣ ਐਥੇਰੀਅਮ ਡੈਰੀਵੇਟਿਵਜ਼ ਦਾ ਆਸਾਨੀ ਨਾਲ ਫਾਇਦਾ ਉਠਾ ਸਕਦੇ ਹਨ।", "full": "ਸਿਕਿਉਰਿਟੀਜ਼ ਐਂਡ ਐਕਸਚੇਂਜ ਕਮਿਸ਼ਨ (SEC) ਨੇ ਅਧਿਕਾਰਤ ਤੌਰ 'ਤੇ ਸਪਾਟ ਐਥੇਰੀਅਮ ETF ਲਈ ਆਪਸ਼ਨ ਟ੍ਰੇਡਿੰਗ ਨੂੰ ਮਨਜ਼ੂਰੀ ਦਿੱਤੀ ਹੈ, ਜਿਸ ਨਾਲ ਵਾਲੀਅਮ ਵਧਿਆ ਹੈ।", "impact": "ਤੇਜ਼ੀ (BULLISH)", "type": "bullish", "time": "20 ਮਿੰਟ ਪਹਿਲਾਂ" }}
-            ]
-        }};
-
-        // Multi-Language AI Chart Analysis Data Engine
+        // Multi-Language AI Core Database
         const aiAnalysisDatabase = {{
             "en": {{
-                "BULLISH": "Technical indicators display a strong buy signal. Exponential Moving Averages (EMA 50 & 200) indicate an upward crossover. The market shows strong momentum and asset prices are likely to increase soon.",
-                "BEARISH": "RSI shows an overbought zone with strong overhead resistance. Immediate sell pressure could trigger a price corrections soon."
+                "BULLISH": "Indicators suggest a strong uptrend. EMA lines show an upward golden crossover. Immediate support levels are holding steady.",
+                "BEARISH": "RSI values entering overbought zone with high overhead resistance. Short-term corrections might happen.",
+                "market_status": "The general market sentiment looks stable. Big institutional buy orders are slowly accumulating at base levels."
             }},
             "hi": {{
-                "BULLISH": "तकनीकी संकेतक (Technical Indicators) एक मजबूत खरीद (Buy) का संकेत दे रहे हैं। EMA 50 और 200 ऊपर की ओर क्रॉसओवर दिखा रहे हैं। बाजार में भारी तेजी का माहौल है और इस कॉइन की कीमतें जल्द ही ऊपर जा सकती हैं।",
-                "BEARISH": "RSI इंडिकेटर ओवरबॉट जोन दिखा रहा है जिससे ऊपर की तरफ मजबूत रेजिस्टेंस बना हुआ है। मुनाफावसूली (Profit booking) के कारण बाजार में जल्द ही गिरावट देखने को मिल सकती है।"
+                "BULLISH": "तकनीकी संकेतक मजबूत तेजी का संकेत दे रहे हैं। EMA लाइनें ऊपर की ओर गोल्डन क्रॉसओवर दिखा रही हैं।",
+                "BEARISH": "RSI वैल्यू ओवरबॉट जोन में जा रही है, ऊपर की तरफ मजबूत रेजिस्टेंस है। कुछ समय के लिए बाजार नीचे आ सकता है।",
+                "market_status": "मार्केट में इस समय स्थिरता बनी हुई है। बड़े व्हेल्स और संस्थागत निवेशक (Institutions) नीचे के लेवल पर धीरे-धीरे खरीदारी बढ़ा रहे हैं।"
             }},
             "pa": {{
-                "BULLISH": "ਤਕਨੀਕੀ ਸੰਕੇਤਕ (Technical Indicators) ਇੱਕ ਮਜ਼ਬੂਤ ਖਰੀਦਦਾਰੀ ਦਾ ਇਸ਼ਾਰਾ ਕਰ ਰਹੇ ਹਨ। EMA 50 ਅਤੇ 200 ਉੱਪਰ ਵੱਲ ਕ੍ਰਾਸਓਵਰ ਦਿਖਾ ਰਹੇ ਹਨ। ਮਾਰਕੀਟ ਵਿੱਚ ਤੇਜ਼ੀ ਦਾ ਦੌਰ ਹੈ ਅਤੇ ਕੀਮਤਾਂ ਜਲਦ ਹੀ ਉੱਪਰ ਜਾ ਸਕਦੀਆਂ ਹਨ।",
-                "BEARISH": "RSI ਇੰਡੀਕੇਟਰ ਓਵਰਬੌਟ ਜ਼ੋਨ ਦਿਖਾ ਰਿਹਾ ਹੈ ਜਿਸ ਕਾਰਨ ਉੱਪਰ ਵੱਲ ਰੁਕਾਵਟ ਬਣੀ ਹੋਈ ਹੈ। ਮਾਰਕੀਟ ਵਿੱਚ ਜਲਦੀ ਹੀ ਗਿਰਾਵਟ ਦੇਖਣ ਨੂੰ ਮਿਲ ਸਕਦੀ ਹੈ।"
+                "BULLISH": "ਤਕਨੀਕੀ ਸੰਕੇਤਕ ਮਜ਼ਬੂਤ ਤੇਜ਼ੀ ਦਾ ਇਸ਼ਾਰਾ ਕਰ ਰਹੇ ਹਨ। EMA ਲਾਈਨਾਂ ਉੱਪਰ ਵੱਲ ਗੋਲਡਨ ਕ੍ਰਾਸਓਵਰ ਦਿਖਾ ਰਹੀਆਂ ਹਨ।",
+                "BEARISH": "RSI ਓਵਰਬੌਟ ਜ਼ੋਨ ਵਿੱਚ ਜਾ ਰਿਹਾ ਹੈ, ਉੱਪਰ ਵੱਲ ਰੁਕਾਵਟ ਬਣੀ ਹੋਈ ਹੈ। ਕੁਝ ਸਮੇਂ ਲਈ ਮਾਰਕੀਟ ਹੇਠਾਂ ਆ ਸਕਦੀ ਹੈ।",
+                "market_status": "ਮਾਰਕੀਟ ਵਿੱਚ ਇਸ ਸਮੇਂ ਸਥਿਰਤਾ ਹੈ। ਵੱਡੇ ਨਿਵੇਸ਼ਕ ਹੇਠਲੇ ਪੱਧਰ 'ਤੇ ਹੌਲੀ-ਹੌਲੀ ਹੋਰ ਖਰੀਦਦਾਰੀ ਵਧਾ ਰਹੇ ਹਨ।"
             }}
         }};
 
@@ -286,48 +246,51 @@ dashboard_html = f"""
             currentLang = lang;
             document.querySelectorAll('.dropdown-menu div').forEach(div => div.classList.remove('selected'));
             document.getElementById(`lang-${{lang}}`).classList.add('selected');
-            renderAINews();
-            updateChartAndAI(); // Language badalte hi AI Analysis bhasha bhi badal jayegi
+            updateChartAndAI();
         }}
 
-        // Embedded TradingView Widget Generation Logic
+        // Dynamic Chart Engine with Indicators Manipulation
         function loadTradingViewChart(symbol) {{
             const container = document.getElementById('tv-chart-container');
-            container.innerHTML = ""; // reset
+            container.innerHTML = "";
             
+            const showEMA = document.getElementById('check-ema').checked;
+            const showVol = document.getElementById('check-vol').checked;
+            
+            // TradingView configuration settings mapping
+            const studiesArray = [];
+            if(showEMA) studiesArray.push("MAExp@tv-basicstudies");
+            if(showVol) studiesArray.push("Volume@tv-basicstudies");
+
             const script = document.createElement('script');
             script.src = 'https://s3.tradingview.com/tv.js';
             script.type = 'text/javascript';
             script.async = true;
             script.onload = function() {{
                 new TradingView.widget({{
-                    "width": "100%",
-                    "height": "100%",
+                    "width": "100%", "height": "100%",
                     "symbol": "BINANCE:" + symbol + "USDT",
-                    "interval": "D",
-                    "timezone": "Etc/UTC",
-                    "theme": document.documentElement.getAttribute('data-theme') || "dark",
-                    "style": "1",
-                    "locale": "en",
-                    "toolbar_bg": "#f1f3f6",
-                    "enable_publishing": false,
-                    "hide_side_toolbar": true,
-                    "allow_symbol_change": true,
-                    "container_id": "tv-chart-container"
+                    "interval": "D", "theme": "dark", "style": "1", "locale": "en",
+                    "hide_side_toolbar": true, "allow_symbol_change": false,
+                    "container_id": "tv-chart-container",
+                    "studies": studiesArray
                 }});
             }};
             document.head.appendChild(script);
         }}
 
-        // Dynamic Chart Search and Multi-lang AI Analysis execution
-        function updateChartAndAI() {{
-            let coinSymbol = document.getElementById('chart-search-input').value.toUpperCase().trim();
-            if(!coinSymbol) coinSymbol = "BTC";
+        // Full Screen Toggle Action Trigger
+        function toggleFullScreen() {{
+            document.body.classList.toggle('fs-mode');
+            // Re-trigger chart layout fit sizes
+            let coinSymbol = document.getElementById('chart-search-input').value.toUpperCase().trim() || "BTC";
+            loadTradingViewChart(coinSymbol);
+        }}
 
-            // TradingView chart load
+        function updateChartAndAI() {{
+            let coinSymbol = document.getElementById('chart-search-input').value.toUpperCase().trim() || "BTC";
             loadTradingViewChart(coinSymbol);
 
-            // Simulating AI dynamic signals (Up or Down based on symbol)
             const signal = (coinSymbol.charCodeAt(0) % 2 === 0) ? "BULLISH" : "BEARISH";
             const badge = document.getElementById('ai-badge');
             
@@ -338,83 +301,37 @@ dashboard_html = f"""
                 badge.innerText = currentLang === 'hi' ? 'मंदी (BEARISH)' : (currentLang === 'pa' ? 'ਮੰਦੀ' : 'BEARISH');
                 badge.className = "ai-direction-badge bg-down";
             }}
-
-            // Print AI Analysis in the exact checked language
             document.getElementById('ai-analysis-text').innerText = `[${{coinSymbol}}USDT] - ` + aiAnalysisDatabase[currentLang][signal];
         }}
 
-        function renderAINews() {{
-            const container = document.getElementById('ai-news-container');
-            container.innerHTML = '';
-            newsDatabase[currentLang].forEach((news, index) => {{
-                let impactClass = news.type === 'bullish' ? 'impact-bullish' : 'impact-bearish';
-                container.innerHTML += `
-                    <div class="news-card" onclick="openNewsModal(${{index}})">
-                        <div class="news-meta">
-                            <span class="news-time">⏱️ ${{news.time}}</span>
-                            <span class="impact-badge ${{impactClass}}">${{news.impact}}</span>
-                        </div>
-                        <div class="news-title">${{news.title}}</div>
-                        <div class="news-summary">${{news.summary}}</div>
-                    </div>
-                `;
-            }});
-        }}
+        // Interactive "Ask AI Option" Handler
+        function askAIEngine() {{
+            const query = document.getElementById('user-chat-input').value.trim();
+            if(!query) return;
 
-        function openNewsModal(index) {{
-            const news = newsDatabase[currentLang][index];
-            let impactClass = news.type === 'bullish' ? 'impact-bullish' : 'impact-bearish';
-            document.getElementById('modal-meta').innerHTML = `<span style="font-size:11px; color:var(--text-secondary);">⏱️ ${{news.time}}</span><span class="impact-badge ${{impactClass}}" style="float:right;">${{news.impact}}</span>`;
-            document.getElementById('modal-title').innerText = news.title;
-            document.getElementById('modal-body').innerText = news.full;
-            document.getElementById('newsModal').style.display = 'flex';
+            const targetBox = document.getElementById('ai-analysis-text');
+            // Mocking prompt logic translation layers based on queries
+            targetBox.innerHTML = "⏳ <i>AI is analyzing market structures...</i>";
+            
+            setTimeout(() => {{
+                targetBox.innerText = "🤖 AI Response: " + aiAnalysisDatabase[currentLang]["market_status"];
+                document.getElementById('user-chat-input').value = ""; // clear
+            }}, 800);
         }}
-        function closeNewsModal() {{ document.getElementById('newsModal').style.display = 'none'; }}
 
         function switchTab(tabId, navId) {{
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             document.getElementById(navId).classList.add('active');
-            
-            if(tabId === 'chart-tab') {{
-                // Chart tab trigger hone par automatic content resize loading
-                let coinSymbol = document.getElementById('chart-search-input').value.toUpperCase().trim();
-                loadTradingViewChart(coinSymbol || "BTC");
-            }}
+            if(tabId === 'chart-tab') {{ updateChartAndAI(); }}
         }}
 
-        function renderTopCards() {{
-            const container = document.getElementById('top-cards-container');
-            container.innerHTML = '';
-            topCardsData.forEach(card => {{
-                const colorClass = card.status === 'up' ? 'text-up' : 'text-down';
-                container.innerHTML += `<div class="crypto-card"><div class="card-header"><span>${{card.symbol}}</span><span class="${{colorClass}}">${{card.change}}</span></div><div class="card-price">${{card.price}}</div></div>`;
-            }});
-        }}
-
-        function renderCoinsList() {{
-            const container = document.getElementById('coins-list-container');
-            container.innerHTML = '';
-            coinsListData.forEach(coin => {{
-                const badgeClass = coin.status === 'up' ? 'bg-up' : 'bg-down';
-                container.innerHTML += `<div class="coin-row"><div class="coin-info" style="width: 40%;"><span class="coin-symbol">${{coin.symbol}}</span><span class="coin-desc">${{coin.desc}}</span></div><div class="coin-price-block" style="width: 35%;"><div class="coin-price">${{coin.price}}</div><div class="coin-vol">${{coin.vol}}</div></div><div style="width: 25%; text-align: right;"><div class="badge ${{badgeClass}}">${{coin.change}}</div></div></div>`;
-            }});
-        }}
-
-        function rerunApp() {{ window.location.reload(); }}
-        function rebootApp() {{ if(confirm("Reboot system?")) window.location.reload(); }}
-        
-        function changeTheme(val) {{ 
-            document.documentElement.setAttribute('data-theme', val);
-            let coinSymbol = document.getElementById('chart-search-input').value.toUpperCase().trim();
-            loadTradingViewChart(coinSymbol || "BTC");
-        }}
-
+        // Initialize lists components
         window.onload = function() {{
-            renderTopCards();
-            renderCoinsList();
-            renderAINews();
+            // Home initialization dummy loaders
+            document.getElementById('top-cards-container').innerHTML = topCardsData.map(c => `<div class="crypto-card"><div class="card-header"><span>${{c.symbol}}</span></div><div class="card-price">${{c.price}}</div></div>`).join('');
+            document.getElementById('coins-list-container').innerHTML = coinsListData.map(coin => `<div class="coin-row"><span class="coin-symbol">${{coin.symbol}}</span><span>${{coin.price}}</span><div class="badge bg-up">${{coin.change}}</div></div>`).join('');
             updateChartAndAI();
         }}
     </script>
@@ -422,4 +339,4 @@ dashboard_html = f"""
 </html>
 """
 
-st.components.v1.html(dashboard_html, height=750, scrolling=True)
+st.components.v1.html(dashboard_html, height=800, scrolling=True)
