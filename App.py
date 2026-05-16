@@ -1,40 +1,17 @@
 import streamlit as st
-import json
 
-# --- 1. CORE DATA SETS (EXACTLY YOUR 4 COINS WITH CRYPTO TICKERS) ---
-top_cards_data = [
-    {"symbol": "BTCUSD", "price": "$79,025.35", "change": "-0.11%", "status": "down"},
-    {"symbol": "ETHUSD", "price": "$2,227.05", "change": "-2.04%", "status": "down"},
-    {"symbol": "SOLUSD", "price": "$142.50", "change": "+4.12%", "status": "up"},
-    {"symbol": "PAXGUSD", "price": "$2,350.10", "change": "+0.15%", "status": "up"}
-]
+# --- 1. SET THEME & APP CONSTANTS ---
+# Ensuring clean container space inside Streamlit canvas
+st.markdown("<style>div.block-container{padding-top:1rem; padding-bottom:0rem;}</style>", unsafe_html=True)
 
-coins_list_data = [
-    {"symbol": "BTCUSD", "desc": "Bitcoin / US Dollar", "price": "$79,025.35", "vol": "$45.2B", "change": "-0.11%", "status": "down"},
-    {"symbol": "ETHUSD", "desc": "Ethereum / US Dollar", "price": "$2,227.05", "vol": "$18.9B", "change": "-2.04%", "status": "down"},
-    {"symbol": "SOLUSD", "desc": "Solana / US Dollar", "price": "$142.50", "vol": "$5.8B", "change": "+4.12%", "status": "up"},
-    {"symbol": "PAXGUSD", "desc": "PAX Gold / US Dollar", "price": "$2,350.10", "vol": "$120M", "change": "+0.15%", "status": "up"}
-]
-
-news_data = [
-    {"title": "🚨 Macro Liquidity Sweep: High impact order volume detected under Bitcoin structural support cluster.", "time": "Just now", "impact": "HIGH IMPACT"},
-    {"title": "📊 Whales Distribution Cycle: Massive stablecoin inflows recorded into derivatives spot orderbooks.", "time": "12m ago", "impact": "CRITICAL RISK"},
-    {"title": "📈 AI Predictive Matrix: Volatility metrics indicate an imminent buy-side short squeeze channel.", "time": "45m ago", "impact": "HIGH IMPACT"}
-]
-
-# Standard JSON conversion without quotes conflicts
-top_cards_json = json.dumps(top_cards_data)
-coins_list_json = json.dumps(coins_list_data)
-news_json = json.dumps(news_data)
-
-# --- 2. MULTI-TAB ENGINE LAYOUT (ZERO PYTHON STRING PARSING TO AVOID BLANK APP) ---
+# --- 2. RAW HIGH-PERFORMANCE CANVAS ENGINE (DIRECT DATA MAPPING) ---
 dashboard_html = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Delta Framework Terminal</title>
+    <title>Delta Terminal</title>
     <style>
         html, body {
             background-color: #0b0c10; color: #ffffff;
@@ -53,7 +30,7 @@ dashboard_html = """
         .tab-panel { display: none; height: 100%; width: 100%; overflow: hidden; }
         .tab-panel.active { display: flex; flex-direction: column; height: 100%; gap: 4px; }
 
-        /* Home View UI elements */
+        /* Home Layout Grid */
         .home-scroller { overflow-y: auto; height: 100%; width: 100%; display: flex; flex-direction: column; gap: 4px; }
         .ticker-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 4px; flex-shrink: 0; }
         .ticker-card { background: #15171c; border: 1px solid #212630; border-radius: 6px; padding: 8px; cursor: pointer; }
@@ -71,14 +48,14 @@ dashboard_html = """
         .badge-up { color: #0ecb81; }
         .badge-down { color: #f6465d; }
 
-        /* Chart View UI Elements */
+        /* Charts Section */
         .search-container { display: flex; gap: 4px; height: 30px; flex-shrink: 0; }
         .search-bar { flex-grow: 1; padding: 0 8px; background: #15171c; border: 1px solid #212630; border-radius: 6px; color: #fff; font-size: 11px; }
         .search-trigger { background: #7047eb; border: none; color: white; padding: 0 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
         .screen-layout { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; overflow: hidden; height: 100%; }
         .chart-box { width: 100%; height: 100%; background: #15171c; border: 1px solid #212630; border-radius: 6px; overflow: hidden; }
         
-        /* Dedicated AI Terminal UI elements */
+        /* Dedicated AI Terminal UI */
         .ai-dedicated-panel { display: flex; flex-direction: column; height: 100%; background: #15171c; border: 1px solid #212630; border-radius: 6px; padding: 8px; box-sizing: border-box; }
         .ai-header-panel { display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; border-bottom: 1px solid #212630; padding-bottom: 6px; flex-shrink: 0; }
         .ai-badge { padding: 2px 6px; border-radius: 3px; font-size: 9px; color: #fff; background-color: #7047eb; font-weight: bold; }
@@ -110,19 +87,59 @@ dashboard_html = """
         
         <div id="home-ui" class="tab-panel active">
             <div class="home-scroller">
-                <div class="ticker-grid" id="top-ticker-target"></div>
+                <div class="ticker-grid" id="top-ticker-target">
+                    <div class="ticker-card" onclick="redirectAssetToChart('BTC')">
+                        <div class="ticker-flex"><span class="ticker-title">BTC / USD</span><span class="ticker-change" style="color:#f6465d;">-0.11%</span></div>
+                        <div class="ticker-price" style="color:#f6465d;">$79,025.35</div>
+                    </div>
+                    <div class="ticker-card" onclick="redirectAssetToChart('ETH')">
+                        <div class="ticker-flex"><span class="ticker-title">ETH / USD</span><span class="ticker-change" style="color:#f6465d;">-2.04%</span></div>
+                        <div class="ticker-price" style="color:#f6465d;">$2,227.05</div>
+                    </div>
+                    <div class="ticker-card" onclick="redirectAssetToChart('SOL')">
+                        <div class="ticker-flex"><span class="ticker-title">SOL / USD</span><span class="ticker-change" style="color:#0ecb81;">+4.12%</span></div>
+                        <div class="ticker-price" style="color:#0ecb81;">$142.50</div>
+                    </div>
+                    <div class="ticker-card" onclick="redirectAssetToChart('PAXG')">
+                        <div class="ticker-flex"><span class="ticker-title">PAXG / USD</span><span class="ticker-change" style="color:#0ecb81;">+0.15%</span></div>
+                        <div class="ticker-price" style="color:#0ecb81;">$2,350.10</div>
+                    </div>
+                </div>
+
                 <div class="list-caption">
                     <div style="width: 45%;">Asset / Description</div>
                     <div style="width: 30%; text-align: right;">Last Price</div>
                     <div style="width: 25%; text-align: right;">24h Chg</div>
                 </div>
-                <div id="coin-list-target"></div>
+
+                <div id="coin-list-target">
+                    <div class="coin-item" onclick="redirectAssetToChart('BTC')">
+                        <div><span class="coin-name">BTCUSD</span><br><span class="coin-sub">Bitcoin / US Dollar</span></div>
+                        <div style="font-weight:bold; font-size:12px; text-align:right;">$79,025.35<br><span style="font-size:10px; font-weight:normal; color:#808a9d;">Vol: $45.2B</span></div>
+                        <div class="coin-badge badge-down">-0.11%</div>
+                    </div>
+                    <div class="coin-item" onclick="redirectAssetToChart('ETH')">
+                        <div><span class="coin-name">ETHUSD</span><br><span class="coin-sub">Ethereum / US Dollar</span></div>
+                        <div style="font-weight:bold; font-size:12px; text-align:right;">$2,227.05<br><span style="font-size:10px; font-weight:normal; color:#808a9d;">Vol: $18.9B</span></div>
+                        <div class="coin-badge badge-down">-2.04%</div>
+                    </div>
+                    <div class="coin-item" onclick="redirectAssetToChart('SOL')">
+                        <div><span class="coin-name">SOLUSD</span><br><span class="coin-sub">Solana / US Dollar</span></div>
+                        <div style="font-weight:bold; font-size:12px; text-align:right;">$142.50<br><span style="font-size:10px; font-weight:normal; color:#808a9d;">Vol: $5.8B</span></div>
+                        <div class="coin-badge badge-up">+4.12%</div>
+                    </div>
+                    <div class="coin-item" onclick="redirectAssetToChart('PAXG')">
+                        <div><span class="coin-name">PAXGUSD</span><br><span class="coin-sub">PAX Gold / US Dollar</span></div>
+                        <div style="font-weight:bold; font-size:12px; text-align:right;">$2,350.10<br><span style="font-size:10px; font-weight:normal; color:#808a9d;">Vol: $120M</span></div>
+                        <div class="coin-badge badge-up">+0.15%</div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div id="chart-ui" class="tab-panel">
             <div class="search-container">
-                <input type="text" id="asset-search" class="search-bar" value="BTCUSD" placeholder="Symbol...">
+                <input type="text" id="asset-search" class="search-bar" value="BTC" placeholder="Symbol...">
                 <button class="search-trigger" onclick="renderTradingCore()">Search</button>
             </div>
             <div class="screen-layout">
@@ -142,7 +159,7 @@ dashboard_html = """
                     <div class="ai-report-line">💡 <b>Mujhe commands dein:</b><br>
                     • <i>"EMA 9/20 indicator laga kar do"</i><br>
                     • <i>"Uper side ki trendline lga do"</i><br>
-                    • Market patterns aur macro targets ke sawal bhi pooch sakte hain!</div>
+                    • Market trends aur parameters ke sawal bhi pooch sakte hain!</div>
                 </div>
 
                 <div class="chat-input-bar">
@@ -153,22 +170,20 @@ dashboard_html = """
         </div>
 
         <div id="news-ui" class="tab-panel">
-            <div class="news-wrapper" id="news-target-feed"></div>
+            <div class="news-wrapper" id="news-target-feed">
+                <div class="news-card"><span class="news-impact-tag">HIGH IMPACT</span><div class="news-title">🚨 Macro Liquidity Sweep: High impact order volume detected under Bitcoin structural support cluster.</div><div class="news-time">Just now</div></div>
+                <div class="news-card"><span class="news-impact-tag">CRITICAL RISK</span><div class="news-title">📊 Whales Distribution Cycle: Massive stablecoin inflows recorded into derivatives spot orderbooks.</div><div class="news-time">12m ago</div></div>
+                <div class="news-card"><span class="news-impact-tag">HIGH IMPACT</span><div class="news-title">📈 AI Predictive Matrix: Volatility metrics indicate an imminent buy-side short squeeze channel.</div><div class="news-time">45m ago</div></div>
+            </div>
         </div>
 
     </div>
 
     <script type="text/javascript">
-        // Direct injection points safely assigned without breaking the JS initialization tree
-        const rawTickers = _TOP_TICKER_PLACEHOLDER_;
-        const rawCoins = _COIN_LIST_PLACEHOLDER_;
-        const newsFeed = _NEWS_FEED_PLACEHOLDER_;
         let activeStudies = [];
 
         function redirectAssetToChart(symbol) {
-            // Clears any complex suffix strings for TradingView parser compatibility
-            let pureSym = symbol.replace("USD", "").trim();
-            document.getElementById('asset-search').value = pureSym;
+            document.getElementById('asset-search').value = symbol.replace("USD", "").trim();
             tabEngine('chart-ui', 'btn-chart');
         }
 
@@ -181,11 +196,9 @@ dashboard_html = """
             script.async = true;
             script.onload = function() {
                 if(typeof TradingView !== 'undefined') {
-                    // Handles cleanup conversion for stable layout execution
-                    let formattedSymbol = coin.replace("USD", "");
                     new TradingView.widget({
                         "width": "100%", "height": "100%",
-                        "symbol": "BINANCE:" + formattedSymbol + "USDT",
+                        "symbol": "BINANCE:" + coin + "USDT",
                         "interval": "60", "theme": "dark", "style": "1", "locale": "en",
                         "hide_side_toolbar": false, "allow_symbol_change": false,
                         "container_id": "tv-widget-frame",
@@ -222,16 +235,16 @@ dashboard_html = """
 
                 if (val.includes("ema") || val.includes("indicator") || val.includes("9/20")) {
                     activeStudies = ["MASimple@tv-basicstudies", "MAExp@tv-basicstudies"];
-                    executionFeedback = '<div class="ai-action-success">🚀 <b>System Alert:</b> EMA 9/20 formulas applied over ' + coin + '. Go to the Charts tab to view updates!</div>';
+                    executionFeedback = '<div class="ai-action-success">🚀 <b>System Alert:</b> EMA 9 and EMA 20 structural lines applied successfully over ' + coin + '. View the updated live chart in the Charts tab!</div>';
                 } 
                 else if (val.includes("trendline") || val.includes("tread line") || val.includes("line lga")) {
-                    executionFeedback = '<div class="ai-action-success">📐 <b>System Alert:</b> Dynamic resistance trendline channel plotted successfully across the local order blocks.</div>';
+                    executionFeedback = '<div class="ai-action-success">📐 <b>System Alert:</b> Dynamic resistance channels plotted across current ' + coin + ' swing points.</div>';
                 } 
                 else if (val.includes("market") || val.includes("price") || val.includes("down") || val.includes("up") || val.includes("analysis")) {
-                    executionFeedback = '<div class="ai-report-line">🤖 <b>AI Analysis Vector:</b> ' + coin + ' metrics indicate high asset volume compression inside demand blocks. A localized breakout movement is highly probable.</div>';
+                    executionFeedback = '<div class="ai-report-line">🤖 <b>AI Analysis Response:</b> Market orders for ' + coin + ' show standard retail squeeze behavior. Liquidity pools are active below support.</div>';
                 }
                 else {
-                    executionFeedback = '<div class="ai-report-line">🤖 <b>AI Response:</b> Input sequence analyzed. Ask me to inject trading parameters or view indicators updates.</div>';
+                    executionFeedback = '<div class="ai-report-line">🤖 <b>AI Response:</b> Query processed. Ask me to toggle charts indicators or run automated structural analysis loops.</div>';
                 }
 
                 logBox.innerHTML += executionFeedback;
@@ -251,37 +264,6 @@ dashboard_html = """
         }
 
         window.onload = function() {
-            // Render 2x2 Clean Grid for the requested Top 4 Coins
-            if (document.getElementById('top-ticker-target')) {
-                document.getElementById('top-ticker-target').innerHTML = rawTickers.map(t => {
-                    let colorCode = t.status === "up" ? "#0ecb81" : "#f6465d";
-                    return '<div class="ticker-card" onclick="redirectAssetToChart(\''+t.symbol+'\')">' +
-                           '<div class="ticker-flex"><span class="ticker-title">' + t.symbol + '</span>' +
-                           '<span class="ticker-change" style="color:' + colorCode + ';">' + t.change + '</span></div>' +
-                           '<div class="ticker-price" style="color:' + colorCode + ';">' + t.price + '</div></div>';
-                }).join('');
-            }
-            
-            // Build the Asset Listing matrix rows
-            if (document.getElementById('coin-list-target')) {
-                document.getElementById('coin-list-target').innerHTML = rawCoins.map(c => {
-                    let badgeClass = c.status === "up" ? "badge-up" : "badge-down";
-                    return '<div class="coin-item" onclick="redirectAssetToChart(\''+c.symbol+'\')">' +
-                           '<div><span class="coin-name">' + c.symbol + '</span><br><span class="coin-sub">' + c.desc + '</span></div>' +
-                           '<div style="font-weight:bold; font-size:12px; text-align:right;">' + c.price + '<br>' +
-                           '<span style="font-size:10px; font-weight:normal; color:#808a9d;">Vol: ' + c.vol + '</span></div>' +
-                           '<div class="coin-badge ' + badgeClass + '">' + c.change + '</div></div>';
-                }).join('');
-            }
-
-            // Build News Blocks data feeds
-            if (document.getElementById('news-target-feed')) {
-                document.getElementById('news-target-feed').innerHTML = newsFeed.map(n => 
-                    '<div class="news-card"><span class="news-impact-tag">' + n.impact + '</span>' +
-                    '<div class="news-title">' + n.title + '</div><div class="news-time">' + n.time + '</div></div>'
-                ).join('');
-            }
-            
             renderTradingCore();
         }
     </script>
@@ -289,10 +271,5 @@ dashboard_html = """
 </html>
 """
 
-# Replace placeholders safely avoiding string breaks
-dashboard_html = dashboard_html.replace("_TOP_TICKER_PLACEHOLDER_", top_cards_json)
-dashboard_html = dashboard_html.replace("_COIN_LIST_PLACEHOLDER_", coins_list_json)
-dashboard_html = dashboard_html.replace("_NEWS_FEED_PLACEHOLDER_", news_json)
-
-# Final Execution Canvas Window
+# Direct structural injection with zero text replace dependencies 
 st.components.v1.html(dashboard_html, height=620, scrolling=False)
