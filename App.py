@@ -1,7 +1,7 @@
 import streamlit as st
 import json
 
-# --- 1. LIVE DATA CONFIGURATION ---
+# --- 1. CONFIGURING TERMINAL DATA SETS ---
 top_cards_data = [
     {"symbol": "BTCUSD", "price": "$79,041.60", "change": "-0.09%", "status": "down"},
     {"symbol": "ETHUSD", "price": "$2,227.05", "change": "-2.04%", "status": "down"}
@@ -19,14 +19,14 @@ top_cards_json = json.dumps(top_cards_data)
 coins_list_json = json.dumps(coins_list_data)
 news_json = json.dumps(news_data)
 
-# --- 2. ADVANCED INTERACTIVE DYNAMIC CHART ENGINE ---
+# --- 2. CHRONOLOGICAL STRUCTURAL INTERFACE ENGINE ---
 dashboard_html = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Delta AI Executable Terminal</title>
+    <title>Delta Chrono Terminal</title>
     <style>
         html, body {
             background-color: #0b0c10; color: #ffffff;
@@ -51,19 +51,21 @@ dashboard_html = """
 
         .tv-custom-tools-row {
             display: flex; background: #15171c; border: 1px solid #212630; border-radius: 4px;
-            padding: 2px 6px; height: 28px; align-items: center; justify-content: space-between; flex-shrink: 0;
+            padding: 2px 6px; height: 26px; align-items: center; justify-content: space-between; flex-shrink: 0;
         }
         .tv-left-group { display: flex; gap: 8px; font-size: 11px; color: #808a9d; }
         .tv-tool-btn { background: #212630; border: 1px solid #363c4e; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 3px; cursor: pointer; font-weight: bold; }
 
         .screen-layout { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; overflow: hidden; }
-        .chart-box { width: 100%; height: 50%; background: #15171c; border: 1px solid #212630; border-radius: 6px; overflow: hidden; flex-shrink: 0; position: relative; }
         
-        /* AI Panel & Chat Box Fixes */
+        /* Chart Box - Adjusted for chronological sequence */
+        .chart-box { width: 100%; height: 42%; background: #15171c; border: 1px solid #212630; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+        
+        /* AI Box - Centered directly under Chart and above bottom scroller elements */
         .ai-exchange-box { 
-            width: 100%; height: 50%; background: #15171c; border: 1px solid #212630; 
+            width: 100%; height: 38%; background: #15171c; border: 1px solid #212630; 
             border-radius: 6px; padding: 6px; box-sizing: border-box; 
-            display: flex; flex-direction: column; overflow: hidden; justify-content: space-between;
+            display: flex; flex-direction: column; overflow: hidden; justify-content: space-between; flex-shrink: 0;
         }
         .ai-header-panel { display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; padding-bottom: 2px; flex-shrink: 0; }
         .ai-badge { padding: 1px 4px; border-radius: 3px; font-size: 9px; color: #fff; background-color: #0ecb81; }
@@ -71,15 +73,20 @@ dashboard_html = """
         .ai-report-line { margin-bottom: 4px; border-bottom: 1px dashed #212630; padding-bottom: 2px; }
         .ai-action-success { color: #0ecb81; font-weight: bold; font-size: 11px; background: rgba(14,203,129,0.1); padding: 4px; border-radius: 3px; margin-top: 2px; }
 
-        .chat-input-bar { display: flex; gap: 4px; border-top: 1px solid #212630; padding-top: 4px; height: 32px; flex-shrink: 0; }
+        .chat-input-bar { display: flex; gap: 4px; border-top: 1px solid #212630; padding-top: 4px; height: 30px; flex-shrink: 0; }
         .chat-field { flex-grow: 1; padding: 0 8px; background: #0b0c10; border: 1px solid #212630; border-radius: 4px; color: #ffffff; font-size: 11px; outline: none; }
         .chat-btn { background: #7047eb; border: none; color: #fff; padding: 0 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
-        .news-card { background: #15171c; border: 1px solid #212630; border-radius: 6px; padding: 10px; margin-bottom: 6px; }
+        /* Bottom Row Scroller for News Feed elements */
+        .bottom-news-pool {
+            width: 100%; height: 20%; overflow-y: auto; background: #0b0c10;
+            border-top: 1px solid #212630; padding-top: 4px; box-sizing: border-box; flex-grow: 1;
+        }
+        .news-card { background: #15171c; border: 1px solid #212630; border-radius: 4px; padding: 6px; margin-bottom: 4px; font-size: 11px; }
 
-        body.fullscreen-active .top-navbar, body.fullscreen-active .search-container, body.fullscreen-active .ai-exchange-box { display: none !important; }
+        body.fullscreen-active .top-navbar, body.fullscreen-active .search-container, body.fullscreen-active .ai-exchange-box, body.fullscreen-active .bottom-news-pool { display: none !important; }
         body.fullscreen-active .container { padding: 0 !important; height: 100% !important; }
-        body.fullscreen-active .screen-layout { height: calc(100% - 30px) !important; }
+        body.fullscreen-active .screen-layout { height: calc(100% - 28px) !important; }
         body.fullscreen-active .chart-box { height: 100% !important; border: none; }
     </style>
 </head>
@@ -87,17 +94,12 @@ dashboard_html = """
 
     <div class="top-navbar">
         <div class="nav-link" id="btn-home" onclick="tabEngine('home-ui', 'btn-home')">🏠 Home</div>
-        <div class="nav-link" id="btn-news" onclick="tabEngine('news-ui', 'btn-news')">📰 News</div>
-        <div class="nav-link active" id="btn-chart" onclick="tabEngine('chart-ui', 'btn-chart')">📊 Charts & AI</div>
+        <div class="nav-link active" id="btn-chart" onclick="tabEngine('chart-ui', 'btn-chart')">📊 Terminal Engine</div>
     </div>
 
     <div class="container">
         <div id="home-ui" class="tab-panel">
-            <div style="padding: 10px; color: #808a9d; font-size: 11px;">Select Charts & AI tab to configure positions.</div>
-        </div>
-
-        <div id="news-ui" class="tab-panel">
-            <div id="news-target-feed"></div>
+            <div style="padding: 10px; color: #808a9d; font-size: 11px;">Active assets monitoring interface loop.</div>
         </div>
 
         <div id="chart-ui" class="tab-panel active">
@@ -134,13 +136,15 @@ dashboard_html = """
                         <button class="chat-btn" onclick="fireQuery()">Ask</button>
                     </div>
                 </div>
+
+                <div class="bottom-news-pool" id="news-target-feed"></div>
             </div>
         </div>
     </div>
 
     <script>
         const newsFeed = ##NEWS_DATA##;
-        let activeStudies = []; // Tracks dynamically applied indicators
+        let activeStudies = [];
 
         function loadTvWidget(coin, studiesList = []) {
             const target = document.getElementById('tv-widget-frame');
@@ -156,7 +160,7 @@ dashboard_html = """
                     "interval": "60", "theme": "dark", "style": "1", "locale": "en",
                     "hide_side_toolbar": false, "allow_symbol_change": false,
                     "container_id": "tv-widget-frame",
-                    "studies": studiesList // Dynamic insertion engine array
+                    "studies": studiesList
                 });
             };
             document.head.appendChild(script);
@@ -183,7 +187,6 @@ dashboard_html = """
             let coin = document.getElementById('asset-search').value.toUpperCase().trim() || "BTC";
             const logBox = document.getElementById('ai-logs-frame');
             
-            // New message appending layout structure (prevents loss of history)
             const currentHistory = logBox.innerHTML;
             logBox.innerHTML = currentHistory + '<div class="ai-report-line" style="color: #7047eb; font-weight: bold; margin-top:8px;">💬 You: "' + originalPrompt + '"</div>' +
                                '<div id="temp-loading" class="ai-report-line">⏳ <i>Executing chart script automation...</i></div>';
@@ -191,25 +194,19 @@ dashboard_html = """
             logBox.scrollTop = logBox.scrollHeight;
 
             setTimeout(function() {
-                // Delete loading tag safely
                 const loader = document.getElementById('temp-loading');
                 if(loader) loader.remove();
 
                 let executionFeedback = "";
 
-                // 1. COMPONENT-A: EMA Indicator Request Parser
                 if (val.includes("ema") || val.includes("indicator") || val.includes("9/20") || val.includes("moving average")) {
-                    // Update layout studies array dynamically
                     activeStudies = ["MASimple@tv-basicstudies", "MAExp@tv-basicstudies"];
                     loadTvWidget(coin, activeStudies);
                     executionFeedback = '<div class="ai-action-success">🚀 Chart updated! EMA 9 and EMA 20 structural lines injected onto live price candles successfully.</div>';
                 } 
-                // 2. COMPONENT-B: Trendline Request Parser
                 else if (val.includes("trendline") || val.includes("tread line") || val.includes("line lga")) {
-                    // Simulating Trendline coordinates integration alert
                     executionFeedback = '<div class="ai-action-success">📐 Trendline applied! Upper side resistance corridor path plotted across recent 1H cluster swing highs.</div>';
                 } 
-                // 3. COMPONENT-C: Generic query fallback handler
                 else {
                     executionFeedback = '<div class="ai-report-line">🤖 <b>AI Quant Bias:</b> Session structure holds stable volume absorption blocks. Ask me to add tools or trend levels anytime!</div>';
                 }
@@ -217,7 +214,6 @@ dashboard_html = """
                 logBox.innerHTML = logBox.innerHTML + executionFeedback;
                 promptBox.value = "";
                 
-                // Keep input active and view locked on bottom row answers
                 setTimeout(() => { logBox.scrollTop = logBox.scrollHeight; }, 30);
             }, 600);
         }
@@ -231,7 +227,7 @@ dashboard_html = """
         }
 
         window.onload = function() {
-            document.getElementById('news-target-feed').innerHTML = newsFeed.map(n => '<div class="news-card"><div>' + n.title + '</div><div style="font-size:10px;color:#808a9d;">' + n.time + '</div></div>').join('');
+            document.getElementById('news-target-feed').innerHTML = newsFeed.map(n => '<div class="news-card"><b>📰 Latest News:</b> ' + n.title + '</div>').join('');
             renderTradingCore();
         }
     </script>
