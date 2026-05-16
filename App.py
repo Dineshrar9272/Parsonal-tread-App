@@ -17,7 +17,7 @@ coins_list_data = [
 top_cards_json = json.dumps(top_cards_data)
 coins_list_json = json.dumps(coins_list_data)
 
-# --- 2. SCREEN PORT ENGINE ---
+# --- 2. FIXED SCROLLABLE VIEWPORT ENGINE ---
 dashboard_html = """
 <!DOCTYPE html>
 <html lang="en">
@@ -49,7 +49,7 @@ dashboard_html = """
         .nav-icon { font-size: 13px; margin-bottom: 1px; }
 
         .container { 
-            padding: 8px; 
+            padding: 6px; 
             height: calc(100% - 38px); 
             box-sizing: border-box;
             overflow: hidden;
@@ -68,26 +68,32 @@ dashboard_html = """
         .coin-sub { color: #808a9d; font-size: 10px; }
         .coin-badge { padding: 4px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; color: #fff; min-width: 55px; text-align: center; background-color: #0ecb81; }
 
-        .search-container { display: flex; gap: 4px; margin-bottom: 6px; height: 32px; flex-shrink: 0; }
-        .search-bar { flex-grow: 1; padding: 0 8px; background: #15171c; border: 1px solid #212630; border-radius: 6px; color: #fff; font-weight: bold; font-size: 12px; }
-        .search-trigger { background: #7047eb; border: none; color: white; padding: 0 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .search-container { display: flex; gap: 4px; margin-bottom: 4px; height: 30px; flex-shrink: 0; }
+        .search-bar { flex-grow: 1; padding: 0 8px; background: #15171c; border: 1px solid #212630; border-radius: 6px; color: #fff; font-weight: bold; font-size: 11px; }
+        .search-trigger { background: #7047eb; border: none; color: white; padding: 0 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
         .panel-top-bar { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 4px; flex-shrink: 0; }
-        .fs-action { background: #212630; border: 1px solid #363c4e; color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .fs-action { background: #212630; border: 1px solid #363c4e; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-        .screen-layout { display: flex; flex-direction: column; gap: 6px; flex-grow: 1; height: calc(100% - 46px); box-sizing: border-box; overflow: hidden; }
-        .chart-box { width: 100%; height: 55%; background: #15171c; border: 1px solid #212630; border-radius: 6px; overflow: hidden; box-sizing: border-box; }
+        .screen-layout { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; height: calc(100% - 40px); box-sizing: border-box; overflow: hidden; }
+        .chart-box { width: 100%; height: 50%; background: #15171c; border: 1px solid #212630; border-radius: 6px; overflow: hidden; box-sizing: border-box; flex-shrink: 0; }
         
-        .ai-exchange-box { width: 100%; height: 45%; background: #15171c; border: 1px solid #212630; border-radius: 6px; padding: 8px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
-        .ai-header-panel { display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 2px; }
+        /* Fixed Structure to prevent text layout push downs */
+        .ai-exchange-box { 
+            width: 100%; height: 50%; background: #15171c; 
+            border: 1px solid #212630; border-radius: 6px; padding: 6px; 
+            box-sizing: border-box; display: flex; flex-direction: column; 
+            overflow: hidden; justify-content: space-between;
+        }
+        .ai-header-panel { display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; padding-bottom: 4px; flex-shrink: 0; }
         .ai-badge { padding: 1px 4px; border-radius: 3px; font-size: 9px; color: #fff; background-color: #0ecb81; }
-        .ai-output-logs { font-size: 11px; color: #e1e4e8; line-height: 1.35; overflow-y: auto; flex-grow: 1; margin-bottom: 4px; background: #101114; padding: 6px; border-radius: 4px; border: 1px solid #1f2226; }
+        .ai-output-logs { font-size: 11px; color: #e1e4e8; line-height: 1.35; overflow-y: auto; flex-grow: 1; background: #101114; padding: 6px; border-radius: 4px; border: 1px solid #1f2226; margin-bottom: 4px; }
         .ai-report-line { margin-bottom: 2px; border-bottom: 1px dashed #212630; padding-bottom: 1px; }
         .ai-highlight { color: #f0a500; font-weight: bold; }
 
-        .chat-input-bar { display: flex; gap: 4px; border-top: 1px solid #212630; padding-top: 4px; height: 28px; flex-shrink: 0; }
+        .chat-input-bar { display: flex; gap: 4px; border-top: 1px solid #212630; padding-top: 4px; height: 32px; flex-shrink: 0; box-sizing: border-box; }
         .chat-field { flex-grow: 1; padding: 0 8px; background: #0b0c10; border: 1px solid #212630; border-radius: 4px; color: #ffffff; font-size: 11px; outline: none; }
-        .chat-btn { background: #7047eb; border: none; color: #fff; padding: 0 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .chat-btn { background: #7047eb; border: none; color: #fff; padding: 0 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
         .floating-exit-btn { display: none; position: fixed; top: 6px; right: 6px; z-index: 999999; background: rgba(112, 71, 235, 0.95); border: none; color: white; padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; }
 
@@ -139,13 +145,12 @@ dashboard_html = """
                 <div class="chart-box" id="tv-widget-frame"></div>
 
                 <div class="ai-exchange-box" id="ai-interact-card">
-                    <div>
-                        <div class="ai-header-panel">
-                            <span style="color:#7047eb;">📊 Real-time AI Quant Insights</span>
-                            <span id="ai-status-tag" class="ai-badge">ANALYZING</span>
-                        </div>
-                        <div id="ai-logs-frame" class="ai-output-logs">Evaluating metrics...</div>
+                    <div class="ai-header-panel">
+                        <span style="color:#7047eb;">📊 Real-time AI Quant Insights</span>
+                        <span id="ai-status-tag" class="ai-badge">ANALYZING</span>
                     </div>
+                    
+                    <div id="ai-logs-frame" class="ai-output-logs">Evaluating metrics...</div>
 
                     <div class="chat-input-bar">
                         <input type="text" id="user-prompt" class="chat-field" placeholder="Ask AI: Entry kaha banau bullish ya bearish?">
@@ -225,7 +230,7 @@ dashboard_html = """
             setTimeout(function() {
                 let aiResponse = "";
                 
-                if (val.includes("entry") || val.includes("kaha banau") || val.includes("tread") || val.includes("trade")) {
+                if (val.includes("entry") || val.includes("kaha banau") || val.includes("tread") || val.includes("trade") || val.includes("kaha par")) {
                     if (val.includes("brish") || val.includes("bearish") || val.includes("down")) {
                         aiResponse = '<div class="ai-report-line" style="color: #f6465d; font-weight: bold;">🚨 Bearish Trade Setup Selected</div>' +
                                      '<div class="ai-report-line">🛑 <b>Short Entry Zone:</b> Break below local VWAP support block.</div>' +
@@ -247,6 +252,9 @@ dashboard_html = """
 
                 logBox.innerHTML = '<div class="ai-report-line" style="color: #7047eb; font-weight: bold;">💬 User Request: "' + originalPrompt + '"</div>' + aiResponse;
                 promptBox.value = "";
+                
+                // Auto scroll to the top of the newly generated answer inside container
+                logBox.scrollTop = 0;
             }, 450);
         }
 
