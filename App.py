@@ -17,127 +17,130 @@ coins_list_data = [
 top_cards_json = json.dumps(top_cards_data)
 coins_list_json = json.dumps(coins_list_data)
 
-# --- 2. LOCKED GEOMETRY RUNTIME HTML ---
+# --- 2. 100% RESPONSIVE VIEWPORT ENGINE ---
 dashboard_html = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Delta Style Mobile Terminal</title>
     <style>
-        /* Prevents overall page bouncing and weird scrolling */
+        /* Force strictly immutable viewport dimensions */
         html, body {
             background-color: #0b0c10;
             color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0; padding: 0;
-            height: 100vh; width: 100vw;
-            overflow: hidden;
+            height: 100%; width: 100%;
+            overflow: hidden !important;
+            position: fixed;
         }
 
-        /* Fixed Navigation Header */
+        /* Navigation Menu Header */
         .top-navbar {
             background-color: #15171c;
             border-bottom: 1px solid #212630; display: flex;
-            justify-content: space-around; padding: 10px 0; height: 42px; box-sizing: border-box;
+            justify-content: space-around; padding: 6px 0; height: 38px; box-sizing: border-box;
         }
         .nav-link {
             text-align: center; font-size: 11px; color: #808a9d;
             cursor: pointer; flex: 1; font-weight: 500;
         }
         .nav-link.active { color: #7047eb; font-weight: bold; }
-        .nav-icon { font-size: 14px; margin-bottom: 1px; }
+        .nav-icon { font-size: 13px; margin-bottom: 1px; }
 
-        /* Content Area Adjustments */
+        /* Responsive Layout Frame */
         .container { 
             padding: 8px; 
-            height: calc(100vh - 42px); 
+            height: calc(100% - 38px); 
             box-sizing: border-box;
-            overflow-y: auto; 
+            overflow: hidden;
         }
-        .tab-panel { display: none; height: 100%; }
-        .tab-panel.active { display: block; }
+        .tab-panel { display: none; height: 100%; width: 100%; }
+        .tab-panel.active { display: flex; flex-direction: column; height: 100%; }
 
-        /* Home Tab Specifics */
-        .ticker-row { display: flex; gap: 8px; margin-bottom: 10px; }
+        /* Home View Layout Elements */
+        .home-scroller {
+            overflow-y: auto; height: 100%; width: 100%;
+        }
+        .ticker-row { display: flex; gap: 6px; margin-bottom: 8px; }
         .ticker-card {
             background: #15171c; border: 1px solid #212630;
-            border-radius: 6px; padding: 8px; flex: 1;
+            border-radius: 6px; padding: 6px; flex: 1;
         }
-        .ticker-title { font-size: 11px; color: #808a9d; }
-        .ticker-price { font-size: 15px; font-weight: bold; margin-top: 2px; }
-        .list-caption { display: flex; justify-content: space-between; color: #808a9d; font-size: 11px; padding: 4px; }
+        .ticker-title { font-size: 10px; color: #808a9d; }
+        .ticker-price { font-size: 14px; font-weight: bold; margin-top: 1px; }
+        .list-caption { display: flex; justify-content: space-between; color: #808a9d; font-size: 10px; padding: 4px; }
         .coin-item {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 4px; border-bottom: 1px solid #212630;
+            padding: 8px 4px; border-bottom: 1px solid #212630;
         }
-        .coin-name { font-weight: bold; font-size: 13px; }
-        .coin-sub { color: #808a9d; font-size: 11px; }
+        .coin-name { font-weight: bold; font-size: 12px; }
+        .coin-sub { color: #808a9d; font-size: 10px; }
         .coin-badge {
-            padding: 5px 8px; border-radius: 4px; font-weight: bold; font-size: 11px;
-            color: #fff; min-width: 60px; text-align: center; background-color: #0ecb81;
+            padding: 4px 6px; border-radius: 4px; font-weight: bold; font-size: 11px;
+            color: #fff; min-width: 55px; text-align: center; background-color: #0ecb81;
         }
 
-        /* Search Header Elements */
-        .search-container { display: flex; gap: 6px; margin-bottom: 8px; height: 36px; }
+        /* Search Layout Headers */
+        .search-container { display: flex; gap: 4px; margin-bottom: 6px; height: 32px; flex-shrink: 0; }
         .search-bar {
-            flex-grow: 1; padding: 0 10px; background: #15171c;
-            border: 1px solid #212630; border-radius: 6px; color: #fff; font-weight: bold; font-size: 13px;
+            flex-grow: 1; padding: 0 8px; background: #15171c;
+            border: 1px solid #212630; border-radius: 6px; color: #fff; font-weight: bold; font-size: 12px;
         }
-        .search-trigger { background: #7047eb; border: none; color: white; padding: 0 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .search-trigger { background: #7047eb; border: none; color: white; padding: 0 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
         .panel-top-bar {
-            display: flex; justify-content: flex-end; align-items: center; margin-bottom: 6px;
+            display: flex; justify-content: flex-end; align-items: center; margin-bottom: 4px; flex-shrink: 0;
         }
         .fs-action {
             background: #212630; border: 1px solid #363c4e; color: #fff; font-size: 11px;
-            padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: bold;
+            padding: 3px 8px; border-radius: 4px; cursor: pointer; font-weight: bold;
         }
 
-        /* Grid Framework with No Jitter Constraints */
+        /* Layout Grid Stack */
         .screen-layout { 
-            display: flex; flex-direction: column; gap: 8px; 
-            height: calc(100% - 50px); box-sizing: border-box;
+            display: flex; flex-direction: column; gap: 6px; 
+            flex-grow: 1; height: calc(100% - 46px); box-sizing: border-box; overflow: hidden;
         }
         .chart-box { 
-            width: 100%; height: 50%; min-height: 220px;
-            background: #15171c; border: 1px solid #212630; border-radius: 8px; overflow: hidden; 
+            width: 100%; height: 55%;
+            background: #15171c; border: 1px solid #212630; border-radius: 6px; overflow: hidden; box-sizing: border-box;
         }
         
-        /* Fixed AI Terminal Container */
+        /* AI Interface Box */
         .ai-exchange-box {
-            width: 100%; height: calc(50% - 8px); background: #15171c; 
-            border: 1px solid #212630; border-radius: 8px; padding: 10px;
+            width: 100%; height: 45%; background: #15171c; 
+            border: 1px solid #212630; border-radius: 6px; padding: 8px;
             box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;
             overflow: hidden;
         }
-        .ai-header-panel { display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
-        .ai-badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; color: #fff; background-color: #0ecb81; }
+        .ai-header-panel { display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 2px; }
+        .ai-badge { padding: 1px 4px; border-radius: 3px; font-size: 9px; color: #fff; background-color: #0ecb81; }
         .ai-output-logs { 
-            font-size: 11px; color: #e1e4e8; line-height: 1.4; overflow-y: auto; flex-grow: 1; margin-bottom: 6px;
-            background: #101114; padding: 6px; border-radius: 6px; border: 1px solid #1f2226;
+            font-size: 11px; color: #e1e4e8; line-height: 1.35; overflow-y: auto; flex-grow: 1; margin-bottom: 4px;
+            background: #101114; padding: 6px; border-radius: 4px; border: 1px solid #1f2226;
         }
-        .ai-report-line { margin-bottom: 4px; border-bottom: 1px dashed #212630; padding-bottom: 2px; }
+        .ai-report-line { margin-bottom: 2px; border-bottom: 1px dashed #212630; padding-bottom: 1px; }
         .ai-highlight { color: #f0a500; font-weight: bold; }
 
-        /* Input Controls */
-        .chat-input-bar { display: flex; gap: 6px; border-top: 1px solid #212630; padding-top: 6px; height: 32px; }
+        /* Custom Dynamic Chat Fields */
+        .chat-input-bar { display: flex; gap: 4px; border-top: 1px solid #212630; padding-top: 4px; height: 28px; flex-shrink: 0; }
         .chat-field {
-            flex-grow: 1; padding: 0 10px; background: #0b0c10;
-            border: 1px solid #212630; border-radius: 6px; color: #ffffff; font-size: 12px; outline: none;
+            flex-grow: 1; padding: 0 8px; background: #0b0c10;
+            border: 1px solid #212630; border-radius: 4px; color: #ffffff; font-size: 11px; outline: none;
         }
-        .chat-btn { background: #7047eb; border: none; color: #fff; padding: 0 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .chat-btn { background: #7047eb; border: none; color: #fff; padding: 0 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
-        /* Floating Absolute Back button for Fullscreen Layouts */
+        /* Floating Absolute back control trigger */
         .floating-exit-btn {
-            display: none; position: fixed; top: 8px; right: 8px; z-index: 99999;
+            display: none; position: fixed; top: 6px; right: 6px; z-index: 999999;
             background: rgba(112, 71, 235, 0.95); border: none; color: white;
-            padding: 5px 10px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer;
+            padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer;
         }
 
-        /* ================= IMMERSIVE LOCK SYSTEM (FULL CHRT) ================= */
-        body.fullscreen-active { overflow: hidden !important; position: fixed; }
+        /* ================= IMMERSIVE VIEWPORT LOCK (FULL CHART) ================= */
         body.fullscreen-active .top-navbar,
         body.fullscreen-active .search-container,
         body.fullscreen-active .panel-top-bar,
@@ -145,12 +148,12 @@ dashboard_html = """
             display: none !important;
         }
         body.fullscreen-active .container {
-            padding: 0 !important; margin: 0 !important; height: 100vh !important; max-height: 100vh !important; overflow: hidden !important;
+            padding: 0 !important; margin: 0 !important; height: 100% !important; width: 100% !important;
         }
-        body.fullscreen-active .screen-layout { height: 100vh !important; }
+        body.fullscreen-active .screen-layout { height: 100% !important; gap: 0 !important; }
         body.fullscreen-active .chart-box {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh !important;
-            border: none; border-radius: 0; z-index: 9999;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100% !important;
+            border: none; border-radius: 0; z-index: 99999;
         }
         body.fullscreen-active .floating-exit-btn { display: block !important; }
     </style>
@@ -170,11 +173,13 @@ dashboard_html = """
 
     <div class="container">
         <div id="home-ui" class="tab-panel">
-            <div class="ticker-row" id="top-ticker-target"></div>
-            <div class="list-caption">
-                <div style="width: 40%;">Contract</div><div style="width: 35%; text-align: right;">Price</div><div style="width: 25%; text-align: right;">Change</div>
+            <div class="home-scroller">
+                <div class="ticker-row" id="top-ticker-target"></div>
+                <div class="list-caption">
+                    <div style="width: 40%;">Contract</div><div style="width: 35%; text-align: right;">Price</div><div style="width: 25%; text-align: right;">Change</div>
+                </div>
+                <div id="coin-list-target"></div>
             </div>
-            <div id="coin-list-target"></div>
         </div>
 
         <div id="chart-ui" class="tab-panel active">
@@ -214,14 +219,11 @@ dashboard_html = """
 
         function generateDetailedAnalysis(coin, status) {
             let rsi = status === "BULLISH" ? Math.floor(Math.random() * 15) + 55 : Math.floor(Math.random() * 15) + 35;
-            let support = status === "BULLISH" ? "Strong baseline buying" : "Fragile local support";
-            
             return `
-                <div class="ai-report-line">🌐 <b>Asset:</b> <span class="ai-highlight">${coin}USDT (1H)</span></div>
-                <div class="ai-report-line">📈 <b>Trend Vector:</b> ${status === "BULLISH" ? '<span style="color:#0ecb81; font-weight:bold;">Strong Inflow (Bullish)</span>' : '<span style="color:#f6465d; font-weight:bold;">Distribution Phase</span>'}</div>
+                <div class="ai-report-line">🌐 <b>Asset:</b> <span class="ai-highlight">${coin}USDT</span></div>
+                <div class="ai-report-line">📈 <b>Vector:</b> ${status === "BULLISH" ? '<span style="color:#0ecb81; font-weight:bold;">Bullish Structure</span>' : '<span style="color:#f6465d; font-weight:bold;">Distribution</span>'}</div>
                 <div class="ai-report-line">🔢 <b>RSI Index:</b> <span class="ai-highlight">${rsi}</span></div>
-                <div class="ai-report-line">🛡️ <b>Orderbook Depth:</b> ${support} spotted.</div>
-                <div class="ai-report-line">💡 <b>AI Bias:</b> ${status === "BULLISH" ? 'Accumulate on pullbacks.' : 'Wait for breakout confirmation.'}</div>
+                <div class="ai-report-line">💡 <b>AI Bias:</b> ${status === "BULLISH" ? 'Accumulate blocks.' : 'Wait for breakdown.'}</div>
             `;
         }
 
@@ -240,7 +242,7 @@ dashboard_html = """
                     "interval": "60", "theme": "dark", "style": "1", "locale": "en",
                     "hide_side_toolbar": false, "allow_symbol_change": false,
                     "container_id": "tv-widget-frame",
-                    "studies": [] // REMOVED VOLUME AND EXTRAS PERMANENTLY
+                    "studies": []
                 });
             };
             document.head.appendChild(script);
@@ -259,11 +261,9 @@ dashboard_html = """
             const badge = document.getElementById('ai-status-tag');
             
             if(bias === "BULLISH") {
-                badge.style.backgroundColor = "#0ecb81";
-                badge.innerText = "BULLISH";
+                badge.style.backgroundColor = "#0ecb81"; badge.innerText = "BULLISH";
             } else {
-                badge.style.backgroundColor = "#f6465d";
-                badge.innerText = "BEARISH";
+                badge.style.backgroundColor = "#f6465d"; badge.innerText = "BEARISH";
             }
             document.getElementById('ai-logs-frame').innerHTML = generateDetailedAnalysis(coin, bias);
         }
@@ -275,15 +275,15 @@ dashboard_html = """
 
             let coin = document.getElementById('asset-search').value.toUpperCase().trim() || "BTC";
             const logBox = document.getElementById('ai-logs-frame');
-            logBox.innerHTML = "⏳ <i>AI is scanning orderbooks...</i>";
+            logBox.innerHTML = "⏳ <i>AI is scanning...</i>";
             
             setTimeout(function() {
                 logBox.innerHTML = `
-                    <div class="ai-report-line" style="color: #7047eb; font-weight: bold;">💬 Question Asked: "${val}"</div>
-                    <div class="ai-report-line">🤖 <b>AI Live Answer:</b> <span class="ai-highlight">${coin}</span> structure shows strong limit order absorption. Overhead resistance is soft, page stability configured.</div>
+                    <div class="ai-report-line" style="color: #7047eb; font-weight: bold;">💬 Ask: "${val}"</div>
+                    <div class="ai-report-line">🤖 <b>AI:</b> Orderbooks for <span class="ai-highlight">${coin}</span> show solid absorption at key blocks. Matrix holds stable.</div>
                 `;
                 promptBox.value = "";
-            }, 600);
+            }, 500);
         }
 
         function tabEngine(panelId, btnId) {
@@ -307,4 +307,5 @@ dashboard_html = """
 dashboard_html = dashboard_html.replace("##TOP_TICKERS##", top_cards_json)
 dashboard_html = dashboard_html.replace("##COINS_LIST##", coins_list_json)
 
-st.components.v1.html(dashboard_html, height=680, scrolling=False) # Scrolling is disabled on main level for steady structure
+# Height configured to 100% viewport simulation matching standard mobile devices
+st.components.v1.html(dashboard_html, height=580, scrolling=False)
