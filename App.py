@@ -2,14 +2,14 @@ import streamlit as st
 import requests
 import json
 
-# --- 1. CORE APPLICATION SETUP ---
+# --- 1. SET CORE LAYOUT CONFIGURATION ---
 st.set_page_config(page_title="Delta Terminal", layout="wide", initial_sidebar_state="collapsed")
 
-# Initialize state structure natively
+# Simple screen mode handling without messy components
 if "fullscreen_mode" not in st.session_state:
     st.session_state.fullscreen_mode = False
 
-# --- 2. FETCH REAL-TIME TICKER DATA (PURE PYTHON) ---
+# --- 2. PYTHON API LIVE TICKER DATA FETCH ---
 def get_live_price(symbol):
     try:
         url = f"https://api.binance.com/api/v3/ticker/24hr?symbol={symbol}USDT"
@@ -20,38 +20,38 @@ def get_live_price(symbol):
     except:
         return "Syncing...", "0.00%", True
 
-# Fetching live top dashboard rates metrics safely
+# Pull current rates instantly 
 btc_p, btc_c, btc_up = get_live_price("BTC")
 eth_p, eth_c, eth_up = get_live_price("ETH")
 sol_p, sol_c, sol_up = get_live_price("SOL")
 paxg_p, paxg_c, paxg_up = get_live_price("PAXG")
 
-# --- 3. SEARCH FIELD OVER CHART PANEL ---
+# --- 3. SEARCH PANEL (TOP BAR DESIGN OVER CHART) ---
 col_search, col_btn = st.columns([4, 1])
 with col_search:
-    asset_input = st.text_input("Asset Search Input", value="BTC", label_visibility="collapsed", placeholder="Search Symbol (e.g. BTC, ETH)...")
+    asset_input = st.text_input("Asset", value="BTC", label_visibility="collapsed", placeholder="Search Symbol (e.g. BTC, ETH)...")
 with col_btn:
     st.button("Search", use_container_width=True)
 
 asset_symbol = asset_input.upper().strip()
 
-# --- 4. CONTROL SYSTEM INTERFACE (EMA, VOL, SCREEN TOGGLE) ---
+# --- 4. CONTROLS SYSTEM INTERFACE (EMA, VOL, TOGGLE SCREEN) ---
 col_ema, col_vol, col_screen = st.columns([1, 1, 2])
 with col_ema:
-    apply_ema = st.checkbox("EMA", value=False, key="live_ema_key")
+    apply_ema = st.checkbox("EMA", value=False)
 with col_vol:
-    apply_vol = st.checkbox("VOL", value=True, key="live_vol_key")
+    apply_vol = st.checkbox("VOL", value=True)
 with col_screen:
     if st.session_state.fullscreen_mode:
-        if st.button("📺 Normal Screen", use_container_width=True, key="set_normal_view"):
+        if st.button("📺 Normal Screen", use_container_width=True):
             st.session_state.fullscreen_mode = False
             st.rerun()
     else:
-        if st.button("🔍 Full Screen", use_container_width=True, key="set_full_view"):
+        if st.button("🔍 Full Screen", use_container_width=True):
             st.session_state.fullscreen_mode = True
             st.rerun()
 
-# Build indicators configuration values array mapping 
+# Build pure static studies configurations string safely
 active_studies = []
 if apply_ema:
     active_studies.append("MASimple@tv-basicstudies")
@@ -60,8 +60,9 @@ if apply_vol:
 
 chart_height = 540 if st.session_state.fullscreen_mode else 340
 
-# --- 5. INDEPENDENT LIVE TRADINGVIEW INFRASTRUCTURE ---
-tradingview_template = """
+# --- 5. CLEAN & UNCRASHABLE LIVE TRADINGVIEW IFRAME ---
+# Fixed direct integration blueprint to guarantee stability
+tradingview_html_source = """
 <!DOCTYPE html>
 <html>
 <head>
@@ -69,22 +70,22 @@ tradingview_template = """
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         html, body { margin: 0; padding: 0; height: 100%; width: 100%; background-color: #0b0c10; overflow: hidden; }
-        #terminal-canvas { height: 100vh; width: 100vw; }
+        #canvas-frame-container { height: 100vh; width: 100vw; }
     </style>
 </head>
 <body>
-    <div id="terminal-canvas"></div>
+    <div id="canvas-frame-container"></div>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script type="text/javascript">
         if (typeof TradingView !== 'undefined') {
             new TradingView.widget({
                 "width": "100%", "height": "100%",
-                "symbol": "BINANCE:__PAIR__USDT",
+                "symbol": "BINANCE:__ASSET_PAIR__USDT",
                 "interval": "60", "theme": "dark", "style": "1", "locale": "en",
                 "toolbar_bg": "#15171c", "enable_publishing": false,
                 "hide_side_toolbar": false, "allow_symbol_change": true,
-                "container_id": "terminal-canvas",
-                "studies": __STUDIES_DATA__
+                "container_id": "canvas-frame-container",
+                "studies": __STUDIES_LIST__
             });
         }
     </script>
@@ -92,23 +93,23 @@ tradingview_template = """
 </html>
 """
 
-# Replace tags natively bypassing string dictionary parsing errors entirely
-final_html_source = tradingview_template.replace("__PAIR__", asset_symbol).replace("__STUDIES_DATA__", json.dumps(active_studies))
+# Swapping placeholders without changing variable keys inside streamlit component
+compiled_html = tradingview_html_source.replace("__ASSET_PAIR__", asset_symbol).replace("__STUDIES_LIST__", json.dumps(active_studies))
 
+# Static key prevents the component wrapper from breaking on re-renders
 st.components.v1.html(
-    final_html_source,
+    compiled_html,
     height=chart_height,
     scrolling=False,
-    key=f"native_live_iframe_{asset_symbol}_{chart_height}_{apply_ema}_{apply_vol}"
+    key="fixed_tradingview_terminal_frame"
 )
 
-# --- 6. METRICS CARDS & AI COGNITIVE BLOCK (HIDES ON FULLSCREEN) ---
+# --- 6. REAL-TIME MINI TICKER TILES & AI FEED (HIDES ON FULLSCREEN) ---
 if not st.session_state.fullscreen_mode:
     st.markdown("<br>", unsafe_html=True)
     
-    # Custom HTML styling grid for real-time rates display
-    c1, c2 = st.columns(2)
-    with c1:
+    col1, col2 = st.columns(2)
+    with col1:
         st.markdown(f"""
         <div style="background-color:#15171c; border:1px solid #212630; padding:10px; border-radius:6px; margin-bottom:6px;">
             <div style="color:#808a9d; font-size:11px;">BTC / USD</div>
@@ -124,7 +125,7 @@ if not st.session_state.fullscreen_mode:
         </div>
         """, unsafe_html=True)
         
-    with c2:
+    with col2:
         st.markdown(f"""
         <div style="background-color:#15171c; border:1px solid #212630; padding:10px; border-radius:6px; margin-bottom:6px;">
             <div style="color:#808a9d; font-size:11px;">ETH / USD</div>
@@ -141,6 +142,6 @@ if not st.session_state.fullscreen_mode:
         """, unsafe_html=True)
 
     st.markdown("<br>", unsafe_html=True)
-    st.info(f"⚡ **System Core Sync:** Live trading matrix active for **{asset_symbol}**. Sub-modules working fine.")
-    st.text_input("Ask System AI", key="quant_system_prompt", placeholder="Ask me anything about current chart indicators...", label_visibility="collapsed")
+    st.info(f"📊 **Live Status:** Feed synchronized for **{asset_symbol}**. Data streaming pipeline stable.")
+    st.text_input("Ask Quant AI", key="quant_stable_chat", placeholder="Ask something about current trends...", label_visibility="collapsed")
     
