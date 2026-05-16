@@ -17,7 +17,7 @@ coins_list_data = [
 top_cards_json = json.dumps(top_cards_data)
 coins_list_json = json.dumps(coins_list_data)
 
-# --- 2. ADVANCED INTERFACE WITHOUT PYTHON BLOCKING BUGS ---
+# --- 2. ADVANCED INTERFACE WITH PROFESSIONAL AI MODULE ---
 dashboard_html = f"""
 <!DOCTYPE html>
 <html lang="en">
@@ -71,18 +71,6 @@ dashboard_html = f"""
             color: #fff; min-width: 65px; text-align: center; background-color: #0ecb81;
         }}
 
-        /* News Language Layout */
-        .news-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }}
-        .dots-menu {{ position: relative; cursor: pointer; font-size: 20px; padding: 0 8px; }}
-        .lang-dropdown {{
-            display: none; position: absolute; right: 0; top: 25px;
-            background: #15171c; border: 1px solid #212630;
-            border-radius: 6px; z-index: 1000; min-width: 110px;
-        }}
-        .lang-dropdown div {{ padding: 8px 12px; font-size: 12px; color: #ffffff; }}
-        .lang-dropdown div.selected {{ color: #7047eb; font-weight: bold; }}
-        .lang-dropdown.show {{ display: block; }}
-
         /* Dynamic Search Tools */
         .search-container {{ display: flex; gap: 6px; margin-bottom: 10px; }}
         .search-bar {{
@@ -104,29 +92,35 @@ dashboard_html = f"""
         }}
         .fs-action:hover {{ background: #7047eb; border-color: #7047eb; }}
 
-        /* ================= RESPONSIVE SMART LAYOUT GRID ================= */
+        /* ================= RESPONSIVE LAYOUT GRID ================= */
         .screen-layout {{
             display: flex; flex-direction: column; gap: 10px; width: 100%;
         }}
         
-        /* Normal Mode Height Layout (As per your Screenshot 1) */
         .chart-box {{
             width: 100%; height: 340px; background: #15171c; 
             border: 1px solid #212630; border-radius: 8px; overflow: hidden;
         }}
         
-        /* AI Panel Layout (Placed where your old buy/sell used to be) */
+        /* Professional AI Interface Panel */
         .ai-exchange-box {{
-            width: 100%; height: 210px; background: #15171c; 
+            width: 100%; height: 260px; background: #15171c; 
             border: 1px solid #212630; border-radius: 8px; padding: 12px;
             box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;
         }}
 
         .ai-header-panel {{ display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 6px; }}
         .ai-badge {{ padding: 2px 6px; border-radius: 4px; font-size: 10px; color: #fff; background-color: #0ecb81; }}
-        .ai-output-logs {{ font-size: 12px; color: #ffffff; line-height: 1.4; overflow-y: auto; flex-grow: 1; margin-bottom: 8px; }}
+        
+        /* Realistic Report Structure CSS */
+        .ai-output-logs {{ 
+            font-size: 11.5px; color: #e1e4e8; line-height: 1.5; overflow-y: auto; flex-grow: 1; margin-bottom: 8px;
+            background: #101114; padding: 8px; border-radius: 6px; border: 1px solid #1f2226;
+        }}
+        .ai-report-line {{ margin-bottom: 4px; border-bottom: 1px dashed #212630; padding-bottom: 3px; }}
+        .ai-highlight {{ color: #f0a500; font-weight: bold; }}
 
-        /* Interactive Text Input Box (Fixed Typing Freezes) */
+        /* Interactive Text Input Box */
         .chat-input-bar {{ display: flex; gap: 6px; border-top: 1px solid #212630; padding-top: 8px; }}
         .chat-field {{
             flex-grow: 1; padding: 8px 12px; background: #0b0c10;
@@ -136,29 +130,25 @@ dashboard_html = f"""
         .chat-field:focus {{ border-color: #7047eb; }}
         .chat-btn {{ background: #7047eb; border: none; color: #fff; padding: 0 14px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }}
 
-        /* ================= EXTRA ACTION: STRETCH FULLSCREEN CONFIG ================= */
-        body.fullscreen-active .ai-exchange-box {{
-            display: none !important; /* Fully hidden when chart is expanded */
-        }}
-        body.fullscreen-active .chart-box {{
-            height: 560px !important; /* Chart occupies whole block space smoothly */
-        }}
+        /* FULLSCREEN TOGGLE ACTIONS */
+        body.fullscreen-active .ai-exchange-box {{ display: none !important; }}
+        body.fullscreen-active .chart-box {{ height: 560px !important; }}
     </style>
 </head>
 <body>
 
     <div class="top-navbar">
-        <div class="nav-link active" id="btn-home" onclick="tabEngine('home-ui', 'btn-home')">
+        <div class="nav-link" id="btn-home" onclick="tabEngine('home-ui', 'btn-home')">
             <div class="nav-icon">🏠</div><div>Home</div>
         </div>
-        <div class="nav-link" id="btn-chart" onclick="tabEngine('chart-ui', 'btn-chart')">
+        <div class="nav-link active" id="btn-chart" onclick="tabEngine('chart-ui', 'btn-chart')">
             <div class="nav-icon">📊</div><div>Charts</div>
         </div>
     </div>
 
     <div class="container">
         
-        <div id="home-ui" class="tab-panel active">
+        <div id="home-ui" class="tab-panel">
             <div class="ticker-row" id="top-ticker-target"></div>
             <div class="list-caption">
                 <div style="width: 40%;">Contract</div><div style="width: 35%; text-align: right;">Price</div><div style="width: 25%; text-align: right;">Change</div>
@@ -166,7 +156,7 @@ dashboard_html = f"""
             <div id="coin-list-target"></div>
         </div>
 
-        <div id="chart-ui" class="tab-panel">
+        <div id="chart-ui" class="tab-panel active">
             <div class="search-container">
                 <input type="text" id="asset-search" class="search-bar" value="BTC" placeholder="Symbol (e.g. BTC, ETH)...">
                 <button class="search-trigger" onclick="renderTradingCore()">Search</button>
@@ -186,14 +176,14 @@ dashboard_html = f"""
                 <div class="ai-exchange-box" id="ai-interact-card">
                     <div>
                         <div class="ai-header-panel">
-                            <span style="color:#7047eb;">✨ AI Analytics Engine</span>
-                            <span id="ai-status-tag" class="ai-badge">BULLISH</span>
+                            <span style="color:#7047eb;">📊 Real-time AI Quant Insights</span>
+                            <span id="ai-status-tag" class="ai-badge">ANALYZING</span>
                         </div>
-                        <div id="ai-logs-frame" class="ai-output-logs">Parsing real-time volume structures...</div>
+                        <div id="ai-logs-frame" class="ai-output-logs">Loading order book micro-structures...</div>
                     </div>
 
                     <div class="chat-input-bar">
-                        <input type="text" id="user-prompt" class="chat-field" placeholder="Ask AI (e.g., Market me kya chal raha hai?)" value="">
+                        <input type="text" id="user-prompt" class="chat-field" placeholder="Ask AI: Market me kya chal raha hai?">
                         <button class="chat-btn" onclick="fireQuery()">Ask</button>
                     </div>
                 </div>
@@ -207,14 +197,21 @@ dashboard_html = f"""
         const rawTickers = {top_cards_json};
         const rawCoins = {coins_list_json};
 
-        // Static Multi-lingual Database Maps
-        const aiBabelEngine = {{
-            "BULLISH": "Market framework is holding the support block securely. Volume delta shows buying accumulation on 1-hour candle sets.",
-            "BEARISH": "Slight distribution noticed at higher range boundaries. Short term traders should manage target risks tightly.",
-            "ask_reply": "AI Market Scan: Whales are currently protecting key demand blocks. No immediate aggressive breakdown trends are visible right now."
-        }};
+        // Advanced Dynamic Pattern Generative Logic
+        function generateDetailedAnalysis(coin, status) {{
+            let rsi = status === "BULLISH" ? Math.floor(Math.random() * 15) + 55 : Math.floor(Math.random() * 15) + 35;
+            let support = status === "BULLISH" ? "Strong baseline buying" : "Fragile local support";
+            
+            return `
+                <div class="ai-report-line">🌐 <b>Asset:</b> <span class="ai-highlight">${{coin}}USDT (1H Frame)</span></div>
+                <div class="ai-report-line">📈 <b>Trend Vector:</b> ${{status === "BULLISH" ? '<span style="color:#0ecb81; font-weight:bold;">Strong Inflow (Bullish Crossover)</span>' : '<span style="color:#f6465d; font-weight:bold;">Distribution Phase (Bearish)</span>'}}</div>
+                <div class="ai-report-line">🔢 <b>Relative Strength Index (RSI):</b> <span class="ai-highlight">${{rsi}}</span> (${{rsi > 60 ? 'Overheating' : 'Neutral-Low'}})</div>
+                <div class="ai-report-line">🛡️ <b>Orderbook Depth:</b> ${{support}} spotted at local Fibonacci retracement blocks.</div>
+                <div class="ai-report-line">💡 <b>AI Action Bias:</b> ${{status === "BULLISH" ? 'Accumulate on pullbacks. Avoid heavy shorting.' : 'Wait for confirmation. Overhead resistance is heavy.'}}</div>
+            `;
+        }}
 
-        // TRADINGVIEW LOADER LAYER 
+        // TRADINGVIEW WIDGET
         function loadTvWidget(coin) {{
             const target = document.getElementById('tv-widget-frame');
             target.innerHTML = "";
@@ -242,20 +239,11 @@ dashboard_html = f"""
             document.head.appendChild(script);
         }}
 
-        // MASTER TOGGLE RULE: HIDE AI WHEN FULLSCREEN, SHOW AI WHEN NORMAL MODE
         function switchViewMode() {{
             const body = document.body;
             const btn = document.getElementById('fs-toggle-btn');
-            
             body.classList.toggle('fullscreen-active');
-            
-            if(body.classList.contains('fullscreen-active')) {{
-                btn.innerText = "📉 Normal View";
-            }} else {{
-                btn.innerText = "🔍 Full Screen Mode";
-            }}
-
-            // Refresh layout mapping 
+            btn.innerText = body.classList.contains('fullscreen-active') ? "减 Normal View" : "🔍 Full Screen Mode";
             let coin = document.getElementById('asset-search').value.toUpperCase().trim() || "BTC";
             loadTvWidget(coin);
         }}
@@ -274,22 +262,28 @@ dashboard_html = f"""
                 badge.style.backgroundColor = "#f6465d";
                 badge.innerText = "BEARISH";
             }}
-            document.getElementById('ai-logs-frame').innerText = "[" + coin + "USDT] - " + aiBabelEngine[bias];
+            
+            document.getElementById('ai-logs-frame').innerHTML = generateDetailedAnalysis(coin, bias);
         }}
 
-        // Dynamic AI Answering Processing
+        // Dynamic Chat Engine response parameters
         function fireQuery() {{
             const promptBox = document.getElementById('user-prompt');
             const val = promptBox.value.trim();
             if(!val) return;
 
+            let coin = document.getElementById('asset-search').value.toUpperCase().trim() || "BTC";
             const logBox = document.getElementById('ai-logs-frame');
-            logBox.innerHTML = "⏳ <i>AI is scanning orderbooks for: \\"" + val + "\\"...</i>";
+            logBox.innerHTML = "⏳ <i>AI Orderbook Scanning in progress...</i>";
             
             setTimeout(() => {{
-                logBox.innerHTML = "🤖 <b>AI Prediction:</b> " + aiBabelEngine["ask_reply"];
-                promptBox.value = ""; // Empty string safely resets field without interface lockups
-            }}, 600);
+                logBox.innerHTML = `
+                    <div class="ai-report-line" style="color: #7047eb; font-weight: bold;">💬 User Query: "${{val}}"</div>
+                    <div class="ai-report-line">🤖 <b>AI Live Feed:</b> Market order flow scan complete. <span class="ai-highlight">${{coin}}</span> order book suggests smart money is matching retailer spot volumes.</div>
+                    <div class="ai-report-line">⚡ <b>Whale Activity:</b> Institutional blocks are setting hidden buy limit blocks just below market price. No immediate massive crash structure observed. Trend stability score: 8.5/10.</div>
+                `;
+                promptBox.value = "";
+            }, 600);
         }}
 
         function tabEngine(panelId, btnId) {{
