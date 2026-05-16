@@ -1,19 +1,21 @@
 import streamlit as st
 import json
 
-# --- 1. CORE APP DATA SETS ---
+# --- 1. CORE APP DATA SETS (UPDATED WITH YOUR TOP 4 COINS) ---
 top_cards_data = [
-    {"symbol": "BTC", "price": "$79,041.60", "change": "-0.09%", "status": "down"},
-    {"symbol": "ETH", "price": "$2,227.05", "change": "-2.04%", "status": "down"}
+    {"symbol": "BTC", "price": "$79,025.35", "change": "-0.11%", "status": "down"},
+    {"symbol": "ETH", "price": "$2,227.05", "change": "-2.04%", "status": "down"},
+    {"symbol": "SOL", "price": "$142.50", "change": "+4.12%", "status": "up"},
+    {"symbol": "PAXG", "price": "$2,350.10", "change": "+0.15%", "status": "up"}
 ]
 
 coins_list_data = [
-    {"symbol": "BTC", "desc": "Bitcoin Perpetual", "price": "$79,041.60", "vol": "$45.2B", "change": "-0.09%", "status": "down"},
+    {"symbol": "BTC", "desc": "Bitcoin Perpetual", "price": "$79,025.35", "vol": "$45.2B", "change": "-0.11%", "status": "down"},
     {"symbol": "ETH", "desc": "Ethereum Perpetual", "price": "$2,227.05", "vol": "$18.9B", "change": "-2.04%", "status": "down"},
+    {"symbol": "SOL", "desc": "Solana Perpetual", "price": "$142.50", "vol": "$5.8B", "change": "+4.12%", "status": "up"},
+    {"symbol": "PAXG", "desc": "PAX Gold Perpetual", "price": "$2,350.10", "vol": "$120M", "change": "+0.15%", "status": "up"},
     {"symbol": "ARC", "desc": "AI Rig Complex Perpetual", "price": "$0.07554", "vol": "$2.49M", "change": "+34.03%", "status": "up"},
-    {"symbol": "FF", "desc": "Falcon Finance Perpetual", "price": "$0.0851", "vol": "$4.97M", "change": "+7.31%", "status": "up"},
-    {"symbol": "BEAT", "desc": "Audiera Perpetual", "price": "$0.6202", "vol": "$1.32M", "change": "+5.62%", "status": "up"},
-    {"symbol": "PARTI", "desc": "Particle Network Perpetual", "price": "$0.06232", "vol": "$283.91K", "change": "+3.57%", "status": "up"}
+    {"symbol": "FF", "desc": "Falcon Finance Perpetual", "price": "$0.0851", "vol": "$4.97M", "change": "+7.31%", "status": "up"}
 ]
 
 news_data = [
@@ -27,7 +29,7 @@ top_cards_json = json.dumps(top_cards_data)
 coins_list_json = json.dumps(coins_list_data)
 news_json = json.dumps(news_data)
 
-# --- 2. MULTI-TAB ENGINE LAYOUT (WITHOUT PYTHON F-STRINGS TO PREVENT SYNTAX ERROR) ---
+# --- 2. MULTI-TAB ENGINE LAYOUT (SAFE FROM PYTHON F-STRING SYNTAX ERRORS) ---
 dashboard_html = """
 <!DOCTYPE html>
 <html lang="en">
@@ -55,10 +57,12 @@ dashboard_html = """
 
         /* Home Layout Components */
         .home-scroller { overflow-y: auto; height: 100%; width: 100%; display: flex; flex-direction: column; gap: 4px; }
-        .ticker-row { display: flex; gap: 6px; margin-bottom: 4px; flex-shrink: 0; }
-        .ticker-card { background: #15171c; border: 1px solid #212630; border-radius: 6px; padding: 6px; flex: 1; cursor: pointer; }
-        .ticker-title { font-size: 10px; color: #808a9d; }
-        .ticker-price { font-size: 12px; font-weight: bold; }
+        .ticker-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 4px; flex-shrink: 0; }
+        .ticker-card { background: #15171c; border: 1px solid #212630; border-radius: 6px; padding: 6px; cursor: pointer; }
+        .ticker-flex { display: flex; justify-content: space-between; align-items: center; }
+        .ticker-title { font-size: 11px; font-weight: bold; color: #ffffff; }
+        .ticker-price { font-size: 12px; font-weight: bold; margin-top: 2px; }
+        .ticker-change { font-size: 10px; font-weight: bold; }
         
         .list-caption { display: flex; justify-content: space-between; color: #808a9d; font-size: 10px; padding: 4px; background: #101114; border-radius: 4px; }
         .coin-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 6px; border-bottom: 1px solid #212630; background: #15171c; border-radius: 6px; margin-top: 2px; cursor: pointer; }
@@ -108,7 +112,7 @@ dashboard_html = """
         
         <div id="home-ui" class="tab-panel active">
             <div class="home-scroller">
-                <div class="ticker-row" id="top-ticker-target"></div>
+                <div class="ticker-grid" id="top-ticker-target"></div>
                 <div class="list-caption">
                     <div style="width: 45%;">Asset / Description</div>
                     <div style="width: 30%; text-align: right;">Last Price</div>
@@ -163,6 +167,7 @@ dashboard_html = """
         const newsFeed = _NEWS_LIST_JSON_PLACEHOLDER_;
         let activeStudies = [];
 
+        // Dynamic chart redirects
         function redirectAssetToChart(symbol) {
             document.getElementById('asset-search').value = symbol;
             tabEngine('chart-ui', 'btn-chart');
@@ -222,7 +227,7 @@ dashboard_html = """
                     executionFeedback = '<div class="ai-action-success">📐 <b>System Alert:</b> Upper resistance trendline matrix plotted across recent 1H swing high points.</div>';
                 } 
                 else if (val.includes("market") || val.includes("price") || val.includes("down") || val.includes("up") || val.includes("analysis")) {
-                    executionFeedback = '<div class="ai-report-line">🤖 <b>AI Analysis Response:</b> Current price pattern for ' + coin + ' is holding inside a major consolidation orderblock. Volumes are neutral, expect dynamic breakout soon.</div>';
+                    executionFeedback = '<div class="ai-report-line">🤖 <b>AI Analysis Response:</b> Current price pattern for ' + coin + ' is holding inside a major consolidation orderblock. Volumes are neutral.</div>';
                 }
                 else {
                     executionFeedback = '<div class="ai-report-line">🤖 <b>AI Response:</b> System scanned. Command loop open, please ask me to add indicators or evaluate macro trends anytime.</div>';
@@ -245,8 +250,14 @@ dashboard_html = """
         }
 
         window.onload = function() {
-            // Populate Home ribbon row data safely
-            document.getElementById('top-ticker-target').innerHTML = rawTickers.map(t => '<div class="ticker-card" onclick="redirectAssetToChart(\''+t.symbol+'\')"><div class="ticker-title">' + t.symbol + 'USDT</div><div class="ticker-price">' + t.price + '</div></div>').join('');
+            // Populate Home 2x2 grid data for 4 Top Coins safely
+            document.getElementById('top-ticker-target').innerHTML = rawTickers.map(t => {
+                let badgeCol = t.status === "up" ? "#0ecb81" : "#f6465d";
+                return '<div class="ticker-card" onclick="redirectAssetToChart(\''+t.symbol+'\')">' +
+                       '<div class="ticker-flex"><span class="ticker-title">' + t.symbol + ' / USDT</span>' +
+                       '<span class="ticker-change" style="color:' + badgeCol + ';">' + t.change + '</span></div>' +
+                       '<div class="ticker-price" style="color:' + badgeCol + ';">' + t.price + '</div></div>';
+            }).join('');
             
             // Populate Main list contract items
             document.getElementById('coin-list-target').innerHTML = rawCoins.map(c => {
@@ -254,7 +265,7 @@ dashboard_html = """
                 return '<div class="coin-item" onclick="redirectAssetToChart(\''+c.symbol+'\')"><div><span class="coin-name">' + c.symbol + ' / USDT</span><br><span class="coin-sub">' + c.desc + '</span></div><div style="font-weight:bold; font-size:12px; text-align:right;">' + c.price + '<br><span style="font-size:10px; font-weight:normal; color:#808a9d;">Vol: ' + c.vol + '</span></div><div class="coin-badge ' + col + '">' + c.change + '</div></div>';
             }).join('');
 
-            // Populate Independent isolated News matrix feeds
+            // Populate News matrix feeds
             document.getElementById('news-target-feed').innerHTML = newsFeed.map(n => '<div class="news-card"><span class="news-impact-tag">' + n.impact + '</span><div class="news-title">' + n.title + '</div><div class="news-time">' + n.time + '</div></div>').join('');
             
             renderTradingCore();
