@@ -1,69 +1,230 @@
-import streamlit as st
-import yfinance as yf
-import pandas as pd
-import plotly.graph_objects as go
+<!DOCTYPE html>
+<html lang="en" data-theme="system">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Dashboard</title>
+    <style>
+        /* CSS Variables for Themes */
+        :root[data-theme="light"] {
+            --bg-color: #f4f6f9;
+            --text-color: #333333;
+            --card-bg: #ffffff;
+            --nav-bg: #007bff;
+            --nav-text: #ffffff;
+            --border-color: #cccccc;
+        }
+        :root[data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --card-bg: #1e1e1e;
+            --nav-bg: #1f1f1f;
+            --nav-text: #bb86fc;
+            --border-color: #333333;
+        }
+        /* System theme default handling via JS or Media Query */
+        @media (prefers-color-scheme: dark) {
+            :root[data-theme="system"] {
+                --bg-color: #121212;
+                --text-color: #ffffff;
+                --card-bg: #1e1e1e;
+                --nav-bg: #1f1f1f;
+                --nav-text: #bb86fc;
+                --border-color: #333333;
+            }
+        }
+        @media (prefers-color-scheme: light) {
+            :root[data-theme="system"] {
+                --bg-color: #f4f6f9;
+                --text-color: #333333;
+                --card-bg: #ffffff;
+                --nav-bg: #007bff;
+                --nav-text: #ffffff;
+                --border-color: #cccccc;
+            }
+        }
 
-# 1. Page Configuration
-st.set_page_config(page_title="Crypto Intelligence", layout="wide")
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            transition: background 0.3s, color 0.3s;
+        }
 
-# Sidebar - Settings & Front Controls
-st.sidebar.header("🕹️ App Dashboard Controls")
+        /* Navbar Style */
+        .navbar {
+            background-color: var(--nav-bg);
+            color: var(--nav-text);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .nav-item {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        .nav-item.active {
+            background-color: rgba(255,255,255,0.2);
+        }
 
-# Manual Rerun Button
-if st.sidebar.button("🔄 Rerun App (Refresh)"):
-    st.rerun()
+        /* Content Sections */
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
 
-# Clear Cache Button (Technical Reboot jaisa kaam karta hai)
-if st.sidebar.button("🧹 Clear Cache & Reboot"):
-    st.cache_data.clear()
-    st.rerun()
+        /* Coins List Style (Home) */
+        .coin-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-st.sidebar.divider()
-timeframe = st.sidebar.selectbox("Select Timeframe", ["1d", "1h", "15m", "5m"], index=1)
+        /* Settings Style */
+        .setting-option {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn:hover { background-color: #0056b3; }
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
 
-st.title("💹 Crypto Intelligence Dashboard")
-st.write("Live Top 5 Coins - Delta Exchange Style")
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <div class="nav-item active" onclick="switchTab('home-tab')">🏠 Home</div>
+        <div class="nav-item" onclick="switchTab('settings-tab')">⚙️ Settings</div>
+    </div>
 
-# 2. Coins List
-top_coins = ["BTC-USD", "ETH-USD", "SOL-USD", "BNB-USD", "XRP-USD"]
-
-if 'selected_coin' not in st.session_state:
-    st.session_state.selected_coin = "BTC-USD"
-
-# 3. Watchlist
-cols = st.columns(5)
-for i, ticker in enumerate(top_coins):
-    with cols[i]:
-        if st.button(f"Analyze {ticker.replace('-USD', '')}"):
-            st.session_state.selected_coin = ticker
+    <div class="container">
         
-        try:
-            # Fetching data
-            price_data = yf.Ticker(ticker).history(period="2d")
-            if not price_data.empty:
-                current_p = price_data['Close'].iloc[-1]
-                prev_p = price_data['Close'].iloc[-2]
-                diff = ((current_p - prev_p) / prev_p) * 100
-                st.metric(label="", value=f"${current_p:,.2f}", delta=f"{diff:+.2f}%")
-        except:
-            st.write("Fetching...")
+        <!-- HOME TAB: Coins List -->
+        <div id="home-tab" class="tab-content active">
+            <h2>All Coins</h2>
+            <div id="coins-container">
+                <!-- Aapki coins list yahan generate hogi -->
+                <div class="coin-card">
+                    <span><strong>Bitcoin (BTC)</strong></span>
+                    <span>$64,500</span>
+                </div>
+                <div class="coin-card">
+                    <span><strong>Ethereum (ETH)</strong></span>
+                    <span>$3,450</span>
+                </div>
+                <div class="coin-card">
+                    <span><strong>Solana (SOL)</strong></span>
+                    <span>$140</span>
+                </div>
+            </div>
+        </div>
 
-st.divider()
+        <!-- SETTINGS TAB -->
+        <div id="settings-tab" class="tab-content">
+            <h2>Settings</h2>
+            
+            <!-- Rerun Option -->
+            <div class="setting-option">
+                <h3>Application</h3>
+                <p>Restart or refresh the coin data fetching process.</p>
+                <button class="btn" onclick="rerunApp()">🔄 Rerun Process</button>
+            </div>
 
-# 4. Candlestick Chart
-sel_ticker = st.session_state.selected_coin
-st.subheader(f"🕯️ {sel_ticker} Candle Chart")
+            <!-- Theme Options (Dark, Light, System) -->
+            <div class="setting-option">
+                <h3>Theme Settings</h3>
+                <label for="theme-select">Choose Theme: </label>
+                <select id="theme-select" onchange="changeTheme(this.value)">
+                    <option value="system">System Default</option>
+                    <option value="light">Light Mode</option>
+                    <option value="dark">Dark Mode</option>
+                </select>
+            </div>
+        </div>
 
-try:
-    df = yf.download(sel_ticker, period="30d", interval=timeframe, auto_adjust=True)
-    if not df.empty:
-        fig = go.Figure(data=[go.Candlestick(
-            x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='Price'
-        )])
-        fig.update_layout(height=500, template="plotly_dark" if st.get_option("theme.base") == "dark" else "plotly_white", 
-                          xaxis_rangeslider_visible=False, margin=dict(l=0, r=0, t=0, b=0))
-        st.plotly_chart(fig, use_container_width=True)
-        st.info(f"Last Price: **${df['Close'].iloc[-1]:,.2f}** | Mode: Live")
-except Exception as e:
-    st.error("Connection slow hai. Sidebar se 'Refresh' karein.")
-    
+    </div>
+
+    <script>
+        // 1. Tab Switching Logic (Home / Settings)
+        function switchTab(tabId) {
+            // Sabhi contents ko hide karein
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Sabhi nav items se active class hatayein
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Target tab ko show karein
+            document.getElementById(tabId).classList.add('active');
+            
+            // Clicked nav item ko active dikhayein
+            if(tabId === 'home-tab') {
+                document.querySelectorAll('.nav-item')[0].classList.add('active');
+            } else {
+                document.querySelectorAll('.nav-item')[1].classList.add('active');
+            }
+        }
+
+        // 2. Rerun Functionality
+        function rerunApp() {
+            alert("Re-running data fetching process...");
+            // Yahan aap apna data reload karne ka function daal sakte hain
+            // jaise: fetchCoinsData();
+            location.reload(); // Temporary page refresh ke liye
+        }
+
+        // 3. Theme Changing Logic (Light, Dark, System)
+        function changeTheme(themeValue) {
+            const root = document.documentElement;
+            root.setAttribute('data-theme', themeValue);
+            
+            // Preference ko save karne ke liye (Optional)
+            localStorage.setItem('selected-theme', themeValue);
+        }
+
+        // Page load hote hi purani saved theme apply karne ke liye
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('selected-theme') || 'system';
+            document.getElementById('theme-select').value = savedTheme;
+            changeTheme(savedTheme);
+        }
+    </script>
+</body>
+</html>
