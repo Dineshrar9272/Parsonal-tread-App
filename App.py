@@ -17,129 +17,142 @@ coins_list_data = [
 top_cards_json = json.dumps(top_cards_data)
 coins_list_json = json.dumps(coins_list_data)
 
-# --- 2. CLEAN HIGH-PERFORMANCE INTERFACE HTML ---
+# --- 2. LOCKED GEOMETRY RUNTIME HTML ---
 dashboard_html = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Delta Style Mobile Terminal</title>
     <style>
-        body {
+        /* Prevents overall page bouncing and weird scrolling */
+        html, body {
             background-color: #0b0c10;
             color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0; padding: 0;
-            overflow-x: hidden;
+            height: 100vh; width: 100vw;
+            overflow: hidden;
         }
 
-        /* Top Bar Navigation */
+        /* Fixed Navigation Header */
         .top-navbar {
-            position: sticky; top: 0; background-color: #15171c;
+            background-color: #15171c;
             border-bottom: 1px solid #212630; display: flex;
-            justify-content: space-around; padding: 12px 0; z-index: 999;
+            justify-content: space-around; padding: 10px 0; height: 42px; box-sizing: border-box;
         }
         .nav-link {
-            text-align: center; font-size: 12px; color: #808a9d;
+            text-align: center; font-size: 11px; color: #808a9d;
             cursor: pointer; flex: 1; font-weight: 500;
         }
         .nav-link.active { color: #7047eb; font-weight: bold; }
-        .nav-icon { font-size: 16px; margin-bottom: 2px; }
+        .nav-icon { font-size: 14px; margin-bottom: 1px; }
 
-        .container { padding: 10px; }
-        .tab-panel { display: none; }
+        /* Content Area Adjustments */
+        .container { 
+            padding: 8px; 
+            height: calc(100vh - 42px); 
+            box-sizing: border-box;
+            overflow-y: auto; 
+        }
+        .tab-panel { display: none; height: 100%; }
         .tab-panel.active { display: block; }
 
-        /* Home View Layout */
-        .ticker-row { display: flex; gap: 8px; margin-bottom: 12px; }
+        /* Home Tab Specifics */
+        .ticker-row { display: flex; gap: 8px; margin-bottom: 10px; }
         .ticker-card {
             background: #15171c; border: 1px solid #212630;
-            border-radius: 6px; padding: 10px; flex: 1;
+            border-radius: 6px; padding: 8px; flex: 1;
         }
         .ticker-title { font-size: 11px; color: #808a9d; }
-        .ticker-price { font-size: 16px; font-weight: bold; margin-top: 4px; }
-        .list-caption { display: flex; justify-content: space-between; color: #808a9d; font-size: 11px; padding: 6px 4px; }
+        .ticker-price { font-size: 15px; font-weight: bold; margin-top: 2px; }
+        .list-caption { display: flex; justify-content: space-between; color: #808a9d; font-size: 11px; padding: 4px; }
         .coin-item {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 4px; border-bottom: 1px solid #212630;
+            padding: 10px 4px; border-bottom: 1px solid #212630;
         }
-        .coin-name { font-weight: bold; font-size: 14px; }
+        .coin-name { font-weight: bold; font-size: 13px; }
         .coin-sub { color: #808a9d; font-size: 11px; }
         .coin-badge {
-            padding: 6px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;
-            color: #fff; min-width: 65px; text-align: center; background-color: #0ecb81;
+            padding: 5px 8px; border-radius: 4px; font-weight: bold; font-size: 11px;
+            color: #fff; min-width: 60px; text-align: center; background-color: #0ecb81;
         }
 
-        /* Search Layout Header */
-        .search-container { display: flex; gap: 6px; margin-bottom: 10px; }
+        /* Search Header Elements */
+        .search-container { display: flex; gap: 6px; margin-bottom: 8px; height: 36px; }
         .search-bar {
-            flex-grow: 1; padding: 10px; background: #15171c;
-            border: 1px solid #212630; border-radius: 6px; color: #fff; font-weight: bold;
+            flex-grow: 1; padding: 0 10px; background: #15171c;
+            border: 1px solid #212630; border-radius: 6px; color: #fff; font-weight: bold; font-size: 13px;
         }
         .search-trigger { background: #7047eb; border: none; color: white; padding: 0 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
-        /* Full Screen Trigger Control Block */
         .panel-top-bar {
-            display: flex; justify-content: flex-end; align-items: center;
-            margin-bottom: 8px;
+            display: flex; justify-content: flex-end; align-items: center; margin-bottom: 6px;
         }
         .fs-action {
-            background: #7047eb; border: none; color: #fff; font-size: 12px;
-            padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: bold;
+            background: #212630; border: 1px solid #363c4e; color: #fff; font-size: 11px;
+            padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: bold;
         }
 
-        /* Responsive Layout Matrix */
-        .screen-layout { display: flex; flex-direction: column; gap: 10px; width: 100%; }
-        .chart-box { width: 100%; height: 340px; background: #15171c; border: 1px solid #212630; border-radius: 8px; overflow: hidden; }
-        
-        /* AI Interface Box */
-        .ai-exchange-box {
-            width: 100%; height: 250px; background: #15171c; 
-            border: 1px solid #212630; border-radius: 8px; padding: 12px;
-            box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;
+        /* Grid Framework with No Jitter Constraints */
+        .screen-layout { 
+            display: flex; flex-direction: column; gap: 8px; 
+            height: calc(100% - 50px); box-sizing: border-box;
         }
-        .ai-header-panel { display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 6px; }
+        .chart-box { 
+            width: 100%; height: 50%; min-height: 220px;
+            background: #15171c; border: 1px solid #212630; border-radius: 8px; overflow: hidden; 
+        }
+        
+        /* Fixed AI Terminal Container */
+        .ai-exchange-box {
+            width: 100%; height: calc(50% - 8px); background: #15171c; 
+            border: 1px solid #212630; border-radius: 8px; padding: 10px;
+            box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;
+            overflow: hidden;
+        }
+        .ai-header-panel { display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
         .ai-badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; color: #fff; background-color: #0ecb81; }
         .ai-output-logs { 
-            font-size: 11.5px; color: #e1e4e8; line-height: 1.5; overflow-y: auto; flex-grow: 1; margin-bottom: 8px;
-            background: #101114; padding: 8px; border-radius: 6px; border: 1px solid #1f2226;
+            font-size: 11px; color: #e1e4e8; line-height: 1.4; overflow-y: auto; flex-grow: 1; margin-bottom: 6px;
+            background: #101114; padding: 6px; border-radius: 6px; border: 1px solid #1f2226;
         }
-        .ai-report-line { margin-bottom: 4px; border-bottom: 1px dashed #212630; padding-bottom: 3px; }
+        .ai-report-line { margin-bottom: 4px; border-bottom: 1px dashed #212630; padding-bottom: 2px; }
         .ai-highlight { color: #f0a500; font-weight: bold; }
 
-        /* User Query Chat fields */
-        .chat-input-bar { display: flex; gap: 6px; border-top: 1px solid #212630; padding-top: 8px; }
+        /* Input Controls */
+        .chat-input-bar { display: flex; gap: 6px; border-top: 1px solid #212630; padding-top: 6px; height: 32px; }
         .chat-field {
-            flex-grow: 1; padding: 8px 12px; background: #0b0c10;
-            border: 1px solid #212630; border-radius: 6px; color: #ffffff; font-size: 13px; outline: none;
+            flex-grow: 1; padding: 0 10px; background: #0b0c10;
+            border: 1px solid #212630; border-radius: 6px; color: #ffffff; font-size: 12px; outline: none;
         }
-        .chat-btn { background: #7047eb; border: none; color: #fff; padding: 0 14px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .chat-btn { background: #7047eb; border: none; color: #fff; padding: 0 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
-        /* Floating Back/Normal View Button for Pure Fullscreen Mode */
+        /* Floating Absolute Back button for Fullscreen Layouts */
         .floating-exit-btn {
-            display: none; position: fixed; top: 10px; right: 10px; z-index: 99999;
-            background: rgba(112, 71, 235, 0.9); border: none; color: white;
-            padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer;
+            display: none; position: fixed; top: 8px; right: 8px; z-index: 99999;
+            background: rgba(112, 71, 235, 0.95); border: none; color: white;
+            padding: 5px 10px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer;
         }
 
-        /* ================= DEEP STRETCH IMMERSIVE FULLSCREEN MODE ================= */
+        /* ================= IMMERSIVE LOCK SYSTEM (FULL CHRT) ================= */
+        body.fullscreen-active { overflow: hidden !important; position: fixed; }
         body.fullscreen-active .top-navbar,
         body.fullscreen-active .search-container,
         body.fullscreen-active .panel-top-bar,
         body.fullscreen-active .ai-exchange-box {
-            display: none !important; /* Hides everything else instantly */
+            display: none !important;
         }
         body.fullscreen-active .container {
-            padding: 0 !important; margin: 0 !important;
+            padding: 0 !important; margin: 0 !important; height: 100vh !important; max-height: 100vh !important; overflow: hidden !important;
         }
+        body.fullscreen-active .screen-layout { height: 100vh !important; }
         body.fullscreen-active .chart-box {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh !important;
             border: none; border-radius: 0; z-index: 9999;
         }
-        body.fullscreen-active .floating-exit-btn {
-            display: block !important; /* Shows exit trigger on top corner of the blank chart */
-        }
+        body.fullscreen-active .floating-exit-btn { display: block !important; }
     </style>
 </head>
 <body>
@@ -166,7 +179,7 @@ dashboard_html = """
 
         <div id="chart-ui" class="tab-panel active">
             <div class="search-container">
-                <input type="text" id="asset-search" class="search-bar" value="BTC" placeholder="Symbol (e.g. BTC, ETH)...">
+                <input type="text" id="asset-search" class="search-bar" value="BTC" placeholder="Symbol...">
                 <button class="search-trigger" onclick="renderTradingCore()">Search</button>
             </div>
 
@@ -183,7 +196,7 @@ dashboard_html = """
                             <span style="color:#7047eb;">📊 Real-time AI Quant Insights</span>
                             <span id="ai-status-tag" class="ai-badge">ANALYZING</span>
                         </div>
-                        <div id="ai-logs-frame" class="ai-output-logs">Parsing multi-timeframe candle profiles...</div>
+                        <div id="ai-logs-frame" class="ai-output-logs">Evaluating metrics...</div>
                     </div>
 
                     <div class="chat-input-bar">
@@ -204,11 +217,11 @@ dashboard_html = """
             let support = status === "BULLISH" ? "Strong baseline buying" : "Fragile local support";
             
             return `
-                <div class="ai-report-line">🌐 <b>Asset:</b> <span class="ai-highlight">${coin}USDT (1H Frame)</span></div>
+                <div class="ai-report-line">🌐 <b>Asset:</b> <span class="ai-highlight">${coin}USDT (1H)</span></div>
                 <div class="ai-report-line">📈 <b>Trend Vector:</b> ${status === "BULLISH" ? '<span style="color:#0ecb81; font-weight:bold;">Strong Inflow (Bullish)</span>' : '<span style="color:#f6465d; font-weight:bold;">Distribution Phase</span>'}</div>
                 <div class="ai-report-line">🔢 <b>RSI Index:</b> <span class="ai-highlight">${rsi}</span></div>
-                <div class="ai-report-line">🛡️ <b>Orderbook Depth:</b> ${support} spotted at local Fibonacci blocks.</div>
-                <div class="ai-report-line">💡 <b>AI Bias:</b> ${status === "BULLISH" ? 'Accumulate on pullbacks.' : 'Wait for breakdown confirmation.'}</div>
+                <div class="ai-report-line">🛡️ <b>Orderbook Depth:</b> ${support} spotted.</div>
+                <div class="ai-report-line">💡 <b>AI Bias:</b> ${status === "BULLISH" ? 'Accumulate on pullbacks.' : 'Wait for breakout confirmation.'}</div>
             `;
         }
 
@@ -227,7 +240,7 @@ dashboard_html = """
                     "interval": "60", "theme": "dark", "style": "1", "locale": "en",
                     "hide_side_toolbar": false, "allow_symbol_change": false,
                     "container_id": "tv-widget-frame",
-                    "studies": ["MAExp@tv-basicstudies", "Volume@tv-basicstudies"]
+                    "studies": [] // REMOVED VOLUME AND EXTRAS PERMANENTLY
                 });
             };
             document.head.appendChild(script);
@@ -267,7 +280,7 @@ dashboard_html = """
             setTimeout(function() {
                 logBox.innerHTML = `
                     <div class="ai-report-line" style="color: #7047eb; font-weight: bold;">💬 Question Asked: "${val}"</div>
-                    <div class="ai-report-line">🤖 <b>AI Live Answer:</b> <span class="ai-highlight">${coin}</span> orderbook patterns indicate smart money is actively holding current support zones. No heavy panic liquidations detected. Trend is steady.</div>
+                    <div class="ai-report-line">🤖 <b>AI Live Answer:</b> <span class="ai-highlight">${coin}</span> structure shows strong limit order absorption. Overhead resistance is soft, page stability configured.</div>
                 `;
                 promptBox.value = "";
             }, 600);
@@ -291,8 +304,7 @@ dashboard_html = """
 </html>
 """
 
-# Safe DOM Dynamic Injections
 dashboard_html = dashboard_html.replace("##TOP_TICKERS##", top_cards_json)
 dashboard_html = dashboard_html.replace("##COINS_LIST##", coins_list_json)
 
-st.components.v1.html(dashboard_html, height=750, scrolling=True)
+st.components.v1.html(dashboard_html, height=680, scrolling=False) # Scrolling is disabled on main level for steady structure
