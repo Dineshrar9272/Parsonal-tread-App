@@ -13,7 +13,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Sessions state initialization
 if "fullscreen_mode" not in st.session_state:
     st.session_state.fullscreen_mode = False
 if "terminal_active_tab" not in st.session_state:
@@ -285,7 +284,7 @@ if not st.session_state.fullscreen_mode:
                     st.rerun()
             st.markdown('</div>', unsafe_html=True)
 
-    # 3. COGNITIVE QUANT AGENT MODULE (STRINGS FIXED & SIMPLIFIED)
+    # 3. COGNITIVE QUANT AGENT MODULE
     elif st.session_state.terminal_active_tab == "🤖 Cognitive Quant Agent Environment Room":
         st.markdown("#### 🤖 COGNITIVE QUANT DATA PROCESSING FEEDS")
         st.markdown(f'<div class="terminal-panel-frame">'
@@ -301,5 +300,23 @@ if not st.session_state.fullscreen_mode:
         if user_ai_prompt_entry:
             add_system_log(f"Telemetry query parsed: {user_ai_prompt_entry}")
             
-            # Clean structural output template without complex nesting errors
-            response_text = f"<div style='background-color:#020304; border:1px solid #7047eb; padding:12px; border-radius:4px; font-family:monospace; font-size:12px; color:#e2e4e9; margin-top:8px;'><b style='color:#7047eb;'>🤖 QUANT ENGINE RESPONSE:</b><br>Processed strategy context parameters for asset identifier {re
+            # Simple string representation to avoid parsing failures on your machine
+            response_html = "<div style='background-color:#020304; border:1px solid #7047eb; padding:12px; border-radius:4px; font-family:monospace; font-size:12px; color:#e2e4e9; margin-top:8px;'><b style='color:#7047eb;'>🤖 QUANT ENGINE RESPONSE:</b><br>Processed strategy context parameters for asset identifier " + resolved_active_symbol + " at terminal index level $"  + str(active_focus_market_matrix['last_price']) + ".</div>"
+            st.markdown(response_html, unsafe_html=True)
+
+    # DEFAULT LIVE WORKSPACE OVERVIEW
+    else:
+        dashboard_row_split_left, dashboard_row_split_right = st.columns([2, 1])
+        with dashboard_row_split_left:
+            st.markdown(f'<div class="terminal-panel-frame" style="height:210px;">'
+                        f'<div class="terminal-title-bar">💡 STRUCTURAL SYSTEM INSIGHT STRATEGY FEED</div>'
+                        f'<p style="font-size:12.5px; line-height:1.5; color:#d1d4dc;">Target pipeline synchronization established for active data streams selector: <b style="color:#0ecb81;">{resolved_active_symbol}USDT</b>.</p>'
+                        f'</div>', unsafe_html=True)
+        with dashboard_row_split_right:
+            st.markdown('<div class="terminal-title-bar" style="margin-bottom:4px;">⏱️ CORE RUNTIME TERMINAL SYSTEM LOGS</div>', unsafe_html=True)
+            compiled_logs_html_payload = "".join([f"<div style='margin-bottom:3px;'>{log_row}</div>" for log_row in st.session_state.system_runtime_logs])
+            st.markdown(f'<div class="log-terminal-output-container">{compiled_logs_html_payload}</div>', unsafe_html=True)
+
+    st.markdown('<div style="text-align:center; font-family:monospace; font-size:10px; color:#474f5c; margin-top:30px; padding-top:12px; border-top:1px solid #1c212b;">'
+                'DELTA TERMINAL MAIN NODE ENGINE v5.0 PRO • CORE COMPUTATION PIPELINE OPERATING HEALTHY • STATUS: ONLINE'
+                '</div>', unsafe_html=True)
