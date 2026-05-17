@@ -55,7 +55,7 @@ def get_binance_ticker_matrix(ticker_symbol):
         return {"status": False, "last_price": 0.0, "price_change_percent": 0.0, "high_price": 0.0, "low_price": 0.0, "volume_base": 0.0, "quote_volume_turnover": 0.0, "weighted_avg_price_vwap": 0.0}
 
 # ============================================================================
-# PROTOCOL 2: CLEAN CSS INJECTION (FIXED STRINGS FOR STABILITY)
+# PROTOCOL 2: CLEAN CSS INJECTION
 # ============================================================================
 custom_css = """
 <style>
@@ -203,7 +203,7 @@ if not st.session_state.fullscreen_mode:
     st.session_state.terminal_active_tab = selected_sub_panel_focus
     st.markdown("<br>", unsafe_html=True)
     
-    # ADVANCED TECHNICALS ENGINE (FIXED ST.METRIC VALUE DATA TYPE)
+    # 1. ADVANCED TECHNICALS ENGINE
     if st.session_state.terminal_active_tab == "📈 Advanced Algorithmic Calculations Engine":
         st.markdown("#### ⚙️ BACKEND ALGORITHMIC CALCULATION MATRIX ENGINE")
         
@@ -234,7 +234,7 @@ if not st.session_state.fullscreen_mode:
                 value=f"${latest_computed_index_row['EMA_Slow']:,.2f}"
             )
 
-    # RISK ALLOCATION ENGINE
+    # 2. RISK ALLOCATION ENGINE
     elif st.session_state.terminal_active_tab == "📐 Risk Optimization & Leveraged Sizing Desk":
         st.markdown("#### 📐 POSITION RISK ANALYSIS ENGINE AND ALIGNMENT DESK")
         
@@ -285,7 +285,7 @@ if not st.session_state.fullscreen_mode:
                     st.rerun()
             st.markdown('</div>', unsafe_html=True)
 
-    # COGNITIVE QUANT AGENT MODULE (FIXED F-STRING AND SYNTAX HERE)
+    # 3. COGNITIVE QUANT AGENT MODULE (FIXED ERROR STRINGS & CONDITIONS HERE)
     elif st.session_state.terminal_active_tab == "🤖 Cognitive Quant Agent Environment Room":
         st.markdown("#### 🤖 COGNITIVE QUANT DATA PROCESSING FEEDS")
         st.markdown(f'<div class="terminal-panel-frame">'
@@ -298,8 +298,6 @@ if not st.session_state.fullscreen_mode:
         
         user_ai_prompt_entry = st.text_input("Quant Engine Query Context Field Box", placeholder="Enter core analysis inquiries...", label_visibility="collapsed")
         
-        # Sahi condition aur properly closed f-string logs fixed here
         if user_ai_prompt_entry:
             add_system_log(f"Telemetry query parsed: {user_ai_prompt_entry}")
-            st.markdown(f'<div style="background-color:#020304; border:1px solid #7047eb; padding:12px; border-radius:4px; font-family:monospace; font-size:12px; color:#e2e4e9; margin-top:8px;">'
-                        f'<b style="color:#7047eb;">🤖 QUANT ENGINE RESPONSE:</b><br>
+            response_html = f'<div style="background-color:#020304; border:1px solid #7047eb; padding:12px; border-radius:4px; font-family:monospace; font-size:12px; color:#e2e4e9; margin-top:8px;"><b style="color:#7047eb;">🤖 QUANT ENGINE RESPONSE:</b><br>Processed strategy context parameters for asset identifier {resolved_active_symbol} at terminal index level ${active_focus_market_matrix["last
