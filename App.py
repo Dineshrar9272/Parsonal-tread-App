@@ -13,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Crash-proof absolute declaration of state hooks
+# Sessions state initialization
 if "fullscreen_mode" not in st.session_state:
     st.session_state.fullscreen_mode = False
 if "terminal_active_tab" not in st.session_state:
@@ -55,7 +55,7 @@ def get_binance_ticker_matrix(ticker_symbol):
         return {"status": False, "last_price": 0.0, "price_change_percent": 0.0, "high_price": 0.0, "low_price": 0.0, "volume_base": 0.0, "quote_volume_turnover": 0.0, "weighted_avg_price_vwap": 0.0}
 
 # ============================================================================
-# PROTOCOL 2: CLEAN CSS INJECTION (FIXED STRINGS TO PREVENT INTERPOLATION CRASHES)
+# PROTOCOL 2: CLEAN CSS INJECTION (FIXED STRINGS FOR STABILITY)
 # ============================================================================
 custom_css = """
 <style>
@@ -76,7 +76,7 @@ custom_css = """
 st.markdown(custom_css, unsafe_html=True)
 
 # ============================================================================
-# PROTOCOL 3: PREMIUM TOP STREAM MARGIN RIBBON
+# PROTOCOL 3: CRYPTO TICKER RIBBON
 # ============================================================================
 if not st.session_state.fullscreen_mode:
     st.markdown('<h2 style="font-family:monospace; font-weight:bold; color:#0ecb81; margin-bottom:4px;">❖ DELTA SYSTEMS : QUANT TERMINAL PRO</h2>', unsafe_html=True)
@@ -103,7 +103,7 @@ if not st.session_state.fullscreen_mode:
     st.markdown("<div style='margin-bottom:10px;'></div>", unsafe_html=True)
 
 # ============================================================================
-# PROTOCOL 4: PRIMARY VIEWPORT CONTROL SYSTEM
+# PROTOCOL 4: VIEWPORT CONTROL SYSTEM
 # ============================================================================
 col_search_frame, col_viewport_toggle = st.columns([4, 1.5])
 
@@ -133,17 +133,17 @@ if not active_focus_market_matrix["status"]:
     active_focus_market_matrix = {"last_price": 65000.0, "price_change_percent": 0.5, "high_price": 66200.0, "low_price": 64100.0, "volume_base": 12000.0, "quote_volume_turnover": 780000000.0, "weighted_avg_price_vwap": 64850.0}
 
 # ============================================================================
-# PROTOCOL 5: EXECUTION DISPLAY MECHANICS (TRADINGVIEW & TELEMETRY HUB)
+# PROTOCOL 5: TRADINGVIEW IFRAME & TELEMETRY HUB
 # ============================================================================
 if st.session_state.fullscreen_mode:
     primary_workspace_left_grid, secondary_workspace_right_grid = st.columns([1, 0]), None
 else:
     primary_workspace_left_grid, secondary_workspace_right_grid = st.columns([3.2, 1])
 
-dynamic_calculated_chart_pixel_height = 650 if st.session_state.fullscreen_mode else 430
+dynamic_calculated_chart_pixel_height = 430
 
 with primary_workspace_left_grid:
-    compiled_iframe_source_url = f"https://s.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=BINANCE:{resolved_active_symbol}USDT&interval=60&theme=dark&style=1&timezone=Exchange&studies=MASimple@tv-basicstudies&studies=Volume@tv-basicstudies"
+    compiled_iframe_source_url = f"https://s.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=BINANCE:{resolved_active_symbol}USDT&interval=60&theme=dark&style=1&timezone=Exchange"
     st.components.v1.iframe(
         src=compiled_iframe_source_url,
         height=dynamic_calculated_chart_pixel_height,
@@ -180,7 +180,7 @@ if secondary_workspace_right_grid is not None:
             unsafe_html=True
         )
         
-        st.markdown('<div class="terminal-title-bar">⚡ BIAS EVALUATION CONFLUENCE</div>', unsafe_html=True)
+        st.markdown('<div class="terminal-title-bar">⚡ BIAS EVALUATION</div>', unsafe_html=True)
         if active_focus_market_matrix['last_price'] >= active_focus_market_matrix['weighted_avg_price_vwap']:
             st.markdown('<div style="margin-bottom:8px;"><span class="tag-bullish-indicator">STRUCTURE BULLISH</span></div>', unsafe_html=True)
         else:
@@ -189,13 +189,13 @@ if secondary_workspace_right_grid is not None:
         st.markdown('</div>', unsafe_html=True)
 
 # ============================================================================
-# PROTOCOL 6: ADVANCED DATA ENVIRONMENTS ROUTER
+# PROTOCOL 6: WORKSPACE TABS SELECTOR
 # ============================================================================
 if not st.session_state.fullscreen_mode:
     st.markdown("---")
     
     selected_sub_panel_focus = st.radio(
-        "Workspace Environment Router Selector",
+        "Workspace Environment Router",
         options=["📊 Live Terminal Workspace", "📈 Advanced Algorithmic Calculations Engine", "📐 Risk Optimization & Leveraged Sizing Desk", "🤖 Cognitive Quant Agent Environment Room"],
         horizontal=True,
         label_visibility="collapsed"
@@ -203,7 +203,7 @@ if not st.session_state.fullscreen_mode:
     st.session_state.terminal_active_tab = selected_sub_panel_focus
     st.markdown("<br>", unsafe_html=True)
     
-    # ADVANCED TECHNICALS SUB-MODULE (SAFE METRIC DRAWING)
+    # ADVANCED TECHNICALS ENGINE (FIXED ST.METRIC VALUE DATA TYPE)
     if st.session_state.terminal_active_tab == "📈 Advanced Algorithmic Calculations Engine":
         st.markdown("#### ⚙️ BACKEND ALGORITHMIC CALCULATION MATRIX ENGINE")
         
@@ -222,7 +222,6 @@ if not st.session_state.fullscreen_mode:
         
         math_ui_col1, math_ui_col2 = st.columns(2)
         with math_ui_col1:
-            # Safe numeric delta string mapping to avoid runtime TypeError
             fast_delta_string = "Bullish Cross" if latest_computed_index_row['EMA_Fast'] > latest_computed_index_row['EMA_Slow'] else "Bearish Drop"
             st.metric(
                 label="Algorithmic Fast Trend Line (EMA-12)",
@@ -235,7 +234,7 @@ if not st.session_state.fullscreen_mode:
                 value=f"${latest_computed_index_row['EMA_Slow']:,.2f}"
             )
 
-    # RISK ALLOCATION ENGINE SUB-MODULE
+    # RISK ALLOCATION ENGINE
     elif st.session_state.terminal_active_tab == "📐 Risk Optimization & Leveraged Sizing Desk":
         st.markdown("#### 📐 POSITION RISK ANALYSIS ENGINE AND ALIGNMENT DESK")
         
@@ -265,7 +264,7 @@ if not st.session_state.fullscreen_mode:
                 )
                 
                 if st.button("⚡ Dispatch Position Payload Configuration to Logs", use_container_width=True):
-                    registered_string_payload = f"ORDER DEPLOYED: Size {optimized_unit_contract_capacity:.3f} {resolved_active_symbol} at ${target_entry_execution_price:,.2f} | Risk Alloc: ${capital_value_exposure_risk_pool:,.2f}"
+                    registered_string_payload = f"ORDER DEPLOYED: Size {optimized_unit_contract_capacity:.3f} {resolved_active_symbol} at ${target_entry_execution_price:,.2f}"
                     st.session_state.simulated_order_book_cache.append(registered_string_payload)
                     add_system_log(f"Risk verification clear: {registered_string_payload}")
                     st.rerun()
@@ -276,7 +275,7 @@ if not st.session_state.fullscreen_mode:
             st.markdown('<div class="terminal-panel-frame" style="min-height:220px;">'
                         '<div class="terminal-title-bar">📋 SIMULATED TERMINAL ORDERBOOK RECORD</div>', unsafe_html=True)
             if not st.session_state.simulated_order_book_cache:
-                st.markdown('<div style="text-align:center; padding:40px 10px; color:#5e6673; font-family:monospace; font-size:11px;">Active registries blank. Compile orders utilizing the left module context panel.</div>', unsafe_html=True)
+                st.markdown('<div style="text-align:center; padding:40px 10px; color:#5e6673; font-family:monospace; font-size:11px;">Active registries blank.</div>', unsafe_html=True)
             else:
                 for active_position_row in list(reversed(st.session_state.simulated_order_book_cache))[:4]:
                     st.markdown(f'<div style="background-color:#07080b; border:1px solid #171b24; padding:6px; border-radius:3px; font-family:monospace; font-size:11px; margin-bottom:4px; color:#e2e4e9;">⚡ {active_position_row}</div>', unsafe_html=True)
@@ -286,7 +285,7 @@ if not st.session_state.fullscreen_mode:
                     st.rerun()
             st.markdown('</div>', unsafe_html=True)
 
-    # COGNITIVE QUANT AGENT MODULE
+    # COGNITIVE QUANT AGENT MODULE (FIXED F-STRING AND SYNTAX HERE)
     elif st.session_state.terminal_active_tab == "🤖 Cognitive Quant Agent Environment Room":
         st.markdown("#### 🤖 COGNITIVE QUANT DATA PROCESSING FEEDS")
         st.markdown(f'<div class="terminal-panel-frame">'
@@ -294,8 +293,13 @@ if not st.session_state.fullscreen_mode:
                     f'<span style="color:#7047eb; font-weight:bold; font-size:12px; font-family:monospace;">💬 CORE SYSTEM INTERACTION INTERFACE</span>'
                     f'<span class="tag-bullish-indicator">AGENT: LIVE</span>'
                     f'</div>'
-                    f'<p style="font-size:12px; color:#b7bdc6; line-height:1.5; margin:0px;">Quant tracking logic actively evaluating telemetry targets for <b>{resolved_active_symbol}USDT</b>. Core algorithmic engine synchronized.</p>'
+                    f'<p style="font-size:12px; color:#b7bdc6; line-height:1.5; margin:0px;">Quant tracking logic actively evaluating telemetry targets for <b>{resolved_active_symbol}USDT</b>.</p>'
                     f'</div>', unsafe_html=True)
+        
         user_ai_prompt_entry = st.text_input("Quant Engine Query Context Field Box", placeholder="Enter core analysis inquiries...", label_visibility="collapsed")
+        
+        # Sahi condition aur properly closed f-string logs fixed here
         if user_ai_prompt_entry:
-            add_system_log(f"Telem
+            add_system_log(f"Telemetry query parsed: {user_ai_prompt_entry}")
+            st.markdown(f'<div style="background-color:#020304; border:1px solid #7047eb; padding:12px; border-radius:4px; font-family:monospace; font-size:12px; color:#e2e4e9; margin-top:8px;">'
+                        f'<b style="color:#7047eb;">🤖 QUANT ENGINE RESPONSE:</b><br>
