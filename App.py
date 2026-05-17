@@ -54,28 +54,10 @@ def get_binance_ticker_matrix(ticker_symbol):
         return {"status": False, "last_price": 0.0, "price_change_percent": 0.0, "high_price": 0.0, "low_price": 0.0, "volume_base": 0.0, "quote_volume_turnover": 0.0, "weighted_avg_price_vwap": 0.0}
 
 # ============================================================================
-# PROTOCOL 2: CLEAN CSS INJECTION
-# ============================================================================
-st.markdown("""
-<style>
-    .stApp { background-color: #060709 !important; color: #d1d4dc !important; }
-    .crypto-ticker-card { background-color: #111318; border: 1px solid #1f2229; padding: 10px; border-radius: 4px; text-align: center; font-family: monospace; }
-    .ticker-name { color: #848e9c; font-size: 11px; font-weight: bold; margin-bottom: 2px; }
-    .price-green { color: #0ecb81 !important; font-size: 15px; font-weight: bold; }
-    .price-red { color: #f6465d !important; font-size: 15px; font-weight: bold; }
-    .terminal-panel-frame { background-color: #12161a; border: 1px solid #232830; border-radius: 6px; padding: 15px; margin-bottom: 12px; }
-    .terminal-title-bar { font-size: 11px; text-transform: uppercase; color: #7047eb; font-weight: bold; letter-spacing: 1px; margin-bottom: 8px; border-bottom: 1px solid #1c2026; padding-bottom: 4px; }
-    .log-terminal-output-container { background-color: #020304; border: 1px solid #171a21; border-radius: 4px; padding: 12px; font-family: monospace; font-size: 11px; height: 180px; overflow-y: auto; color: #00ff66; line-height: 1.4; }
-    .tag-bullish-indicator { background-color: rgba(14,203,129,0.1); color: #0ecb81; border: 1px solid #0ecb81; padding: 2px 5px; border-radius: 3px; font-size: 10px; }
-    .tag-bearish-indicator { background-color: rgba(246,70,93,0.1); color: #f6465d; border: 1px solid #f6465d; padding: 2px 5px; border-radius: 3px; font-size: 10px; }
-</style>
-""", unsafe_html=True)
-
-# ============================================================================
-# PROTOCOL 3: CRYPTO TICKER RIBBON
+# PROTOCOL 3: CRYPTO TICKER RIBBON (COMPATIBLE CLEAN LAYOUT)
 # ============================================================================
 if not st.session_state.fullscreen_mode:
-    st.markdown('<h2 style="font-family:monospace; font-weight:bold; color:#0ecb81; margin-bottom:4px;">❖ DELTA SYSTEMS : QUANT TERMINAL PRO</h2>', unsafe_html=True)
+    st.subheader("❖ DELTA SYSTEMS : QUANT TERMINAL PRO")
     
     monitored_token_list = ["BTC", "ETH", "SOL", "BNB", "XRP", "ADA", "DOT", "DOGE"]
     ticker_columns_layout_grid = st.columns(8)
@@ -84,23 +66,19 @@ if not st.session_state.fullscreen_mode:
         with ticker_columns_layout_grid[array_index]:
             token_stats_matrix = get_binance_ticker_matrix(token_symbol)
             if token_stats_matrix["status"]:
-                color_class_assignment = "price-green" if token_stats_matrix["price_change_percent"] >= 0 else "price-red"
                 change_sign_prefix = "+" if token_stats_matrix["price_change_percent"] >= 0 else ""
-                st.markdown(
-                    '<div class="crypto-ticker-card">'
-                    '<div class="ticker-name">' + token_symbol + '/USDT</div>'
-                    '<div class="' + color_class_assignment + '">$' + f"{token_stats_matrix['last_price']:,.2f}" + '</div>'
-                    '<div class="' + color_class_assignment + '" style="font-size:11px;">' + change_sign_prefix + f"{token_stats_matrix['price_change_percent']:.2f}%" + '</div>'
-                    '</div>', 
-                    unsafe_html=True
+                st.metric(
+                    label=f"{token_symbol}/USDT",
+                    value=f"${token_stats_matrix['last_price']:,.2f}",
+                    delta=f"{change_sign_prefix}{token_stats_matrix['price_change_percent']:.2f}%"
                 )
             else:
-                st.markdown('<div class="crypto-ticker-card"><div class="ticker-name">' + token_symbol + '</div><div style="color:#e05638;">OFFLINE</div></div>', unsafe_html=True)
+                st.error(f"{token_symbol} OFFLINE")
 
 # ============================================================================
 # PROTOCOL 4: VIEWPORT CONTROL SYSTEM
 # ============================================================================
-st.markdown("<br>", unsafe_html=True)
+st.markdown("---")
 col_search_frame, col_viewport_toggle = st.columns([4, 1.5])
 
 with col_search_frame:
@@ -142,37 +120,19 @@ with primary_workspace_left_grid:
 
 if secondary_workspace_right_grid is not None:
     with secondary_workspace_right_grid:
-        st.markdown('<div class="terminal-panel-frame" style="height: 450px; overflow-y: auto;">'
-                    '<div class="terminal-title-bar">📊 HUB MATRIX: ' + resolved_active_symbol + '</div>', unsafe_html=True)
+        st.write(f"### 📊 HUB MATRIX: {resolved_active_symbol}")
         
-        st.markdown(
-            "<div style='display:flex; justify-content:space-between; margin-bottom:10px; font-size:13px; font-family:monospace;'>"
-            "<span style='color:#848e9c;'>SPOT VALUE:</span>"
-            "<span style='color:#ffffff; font-weight:bold;'>$" + f"{active_focus_market_matrix['last_price']:,.2f}" + "</span>"
-            "</div>"
-            "<div style='display:flex; justify-content:space-between; margin-bottom:10px; font-size:12px; font-family:monospace;'>"
-            "<span style='color:#848e9c;'>24h HIGH:</span>"
-            "<span style='color:#e2e4e9;'>$" + f"{active_focus_market_matrix['high_price']:,.2f}" + "</span>"
-            "</div>"
-            "<div style='display:flex; justify-content:space-between; margin-bottom:10px; font-size:12px; font-family:monospace;'>"
-            "<span style='color:#848e9c;'>24h LOW:</span>"
-            "<span style='color:#e2e4e9;'>$" + f"{active_focus_market_matrix['low_price']:,.2f}" + "</span>"
-            "</div>"
-            "<div style='display:flex; justify-content:space-between; margin-bottom:10px; font-size:12px; font-family:monospace;'>"
-            "<span style='color:#848e9c;'>VOLUME:</span>"
-            "<span style='color:#0ecb81;'>$" + f"{active_focus_market_matrix['quote_volume_turnover']/1000000:,.1f}" + "M</span>"
-            "</div>"
-            "<hr style='border-color:#1c2026;'>", 
-            unsafe_html=True
-        )
+        st.write(f"**SPOT VALUE:** ${active_focus_market_matrix['last_price']:,.2f}")
+        st.write(f"**24h HIGH:** ${active_focus_market_matrix['high_price']:,.2f}")
+        st.write(f"**24h LOW:** ${active_focus_market_matrix['low_price']:,.2f}")
+        st.write(f"**VOLUME:** ${active_focus_market_matrix['quote_volume_turnover']/1000000:,.1f}M")
         
-        st.markdown('<div class="terminal-title-bar">⚡ BIAS EVALUATION</div>', unsafe_html=True)
+        st.write("---")
+        st.write("⚡ **BIAS EVALUATION**")
         if active_focus_market_matrix['last_price'] >= active_focus_market_matrix['weighted_avg_price_vwap']:
-            st.markdown('<div><span class="tag-bullish-indicator">STRUCTURE BULLISH</span></div>', unsafe_html=True)
+            st.success("STRUCTURE BULLISH")
         else:
-            st.markdown('<div><span class="tag-bearish-indicator">STRUCTURE BEARISH</span></div>', unsafe_html=True)
-            
-        st.markdown('</div>', unsafe_html=True)
+            st.error("STRUCTURE BEARISH")
 
 # ============================================================================
 # PROTOCOL 6: WORKSPACE TABS SELECTOR
@@ -207,13 +167,10 @@ if not st.session_state.fullscreen_mode:
                 total_notional_leverage_volume = optimized_unit_contract_capacity * target_entry_execution_price
                 mathematical_implied_leverage_ratio = total_notional_leverage_volume / st.session_state.account_margin_base
                 
-                st.markdown(
-                    '<div style="background-color:#0b0d12; border:1px dashed #2d323f; padding:12px; border-radius:4px; font-family:monospace; font-size:12px;">'
-                    '<span style="color:#848e9c;">CAPITAL POOL AT RISK :</span> <span style="color:#f6465d; font-weight:bold;">$' + f"{capital_value_exposure_risk_pool:,.2f}" + '</span><br>'
-                    '<span style="color:#848e9c;">OPTIMIZED POSITION SIZE:</span> <span style="color:#0ecb81; font-weight:bold;">' + f"{optimized_unit_contract_capacity:.4f}" + ' ' + resolved_active_symbol + '</span><br>'
-                    '<span style="color:#848e9c;">IMPLIED LEVERAGE RATIO:</span> <span style="color:#7047eb; font-weight:bold;">' + f"{mathematical_implied_leverage_ratio:.2f}" + 'x Leverage</span>'
-                    '</div>',
-                    unsafe_html=True
+                st.info(
+                    f"**CAPITAL POOL AT RISK:** ${capital_value_exposure_risk_pool:,.2f} | "
+                    f"**OPTIMIZED POSITION SIZE:** {optimized_unit_contract_capacity:.4f} {resolved_active_symbol} | "
+                    f"**IMPLIED LEVERAGE RATIO:** {mathematical_implied_leverage_ratio:.2f}x Leverage"
                 )
                 
                 if st.button("⚡ Dispatch Position Payload Configuration", use_container_width=True):
@@ -223,45 +180,35 @@ if not st.session_state.fullscreen_mode:
                     st.rerun()
 
         with allocation_layout_right_col:
-            st.markdown('<div class="terminal-panel-frame" style="min-height:220px;">'
-                        '<div class="terminal-title-bar">📋 SIMULATED TERMINAL ORDERBOOK RECORD</div>', unsafe_html=True)
+            st.write("📋 **SIMULATED TERMINAL ORDERBOOK RECORD**")
             if not st.session_state.simulated_order_book_cache:
-                st.markdown('<div style="text-align:center; padding:40px 10px; color:#5e6673; font-family:monospace; font-size:11px;">Active registries blank.</div>', unsafe_html=True)
+                st.text("Active registries blank.")
             else:
                 for active_position_row in list(reversed(st.session_state.simulated_order_book_cache))[:4]:
-                    st.markdown('<div style="background-color:#07080b; border:1px solid #171b24; padding:6px; border-radius:3px; font-family:monospace; font-size:11px; margin-bottom:4px; color:#e2e4e9;">⚡ ' + active_position_row + '</div>', unsafe_html=True)
+                    st.code(f"⚡ {active_position_row}")
 
     # 2. COGNITIVE QUANT AGENT MODULE
     elif st.session_state.terminal_active_tab == "🤖 Cognitive Quant Agent Room":
         st.markdown("#### 🤖 COGNITIVE QUANT DATA PROCESSING FEEDS")
-        st.markdown('<div class="terminal-panel-frame">'
-                    '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">'
-                    '<span style="color:#7047eb; font-weight:bold; font-size:12px; font-family:monospace;">💬 QUANT SYSTEM INTERACTION INTERFACE</span>'
-                    '<span class="tag-bullish-indicator">AGENT: LIVE</span>'
-                    '</div>'
-                    '<p style="font-size:12px; color:#b7bdc6; margin:0px;">Quant tracking logic actively evaluating targets for ' + resolved_active_symbol + 'USDT.</p>'
-                    '</div>', unsafe_html=True)
+        st.info(f"💬 **QUANT SYSTEM INTERACTION INTERFACE** (AGENT: LIVE) \n\nQuant tracking logic actively evaluating targets for {resolved_active_symbol}USDT.")
         
         user_ai_prompt_entry = st.text_input("Quant Engine Query Context Field Box", placeholder="Enter core analysis inquiries...", label_visibility="collapsed")
         if user_ai_prompt_entry:
             add_system_log("Query parsed: " + str(user_ai_prompt_entry))
-            st.markdown("<div style='background-color:#020304; border:1px solid #7047eb; padding:12px; border-radius:4px; font-family:monospace; font-size:12px; color:#00ff66;'>"
-                        "<b>🤖 QUANT RESPONSE:</b><br>Processed strategy parameters for " + resolved_active_symbol + " at level $" + f"{active_focus_market_matrix['last_price']:,.2f}" + ". Evaluation matrix holds normal thresholds.</div>", unsafe_html=True)
+            st.code(f"🤖 QUANT RESPONSE:\nProcessed strategy parameters for {resolved_active_symbol} at level ${active_focus_market_matrix['last_price']:,.2f}. Evaluation matrix holds normal thresholds.")
 
     # DEFAULT LIVE WORKSPACE OVERVIEW (HOME)
     else:
         dashboard_row_split_left, dashboard_row_split_right = st.columns([2, 1])
         with dashboard_row_split_left:
-            st.markdown('<div class="terminal-panel-frame" style="height:210px;">'
-                        '<div class="terminal-title-bar">💡 STRUCTURAL SYSTEM INSIGHT STRATEGY FEED</div>'
-                        '<p style="font-size:12.5px; line-height:1.5; color:#d1d4dc;">Target pipeline synchronization established for active data streams selector: <b style="color:#0ecb81;">' + resolved_active_symbol + 'USDT</b>.</p>'
-                        '<p style="font-size:12px; color:#848e9c;">System engine running deployment clusters inside sandboxed virtual terminal workspace securely.</p>'
-                        '</div>', unsafe_html=True)
+            st.write("### 💡 STRUCTURAL SYSTEM INSIGHT STRATEGY FEED")
+            st.write(f"Target pipeline synchronization established for active data streams selector: **{resolved_active_symbol}USDT**.")
+            st.write("System engine running deployment clusters inside sandboxed virtual terminal workspace securely.")
         with dashboard_row_split_right:
-            st.markdown('<div class="terminal-title-bar" style="margin-bottom:4px;">⏱️ CORE RUNTIME TERMINAL SYSTEM LOGS</div>', unsafe_html=True)
-            compiled_logs_html_payload = "".join(["<div style='margin-bottom:3px;'>" + str(log_row) + "</div>" for log_row in st.session_state.system_runtime_logs])
-            st.markdown('<div class="log-terminal-output-container">' + compiled_logs_html_payload + '</div>', unsafe_html=True)
+            st.write("⏱️ **CORE RUNTIME TERMINAL SYSTEM LOGS**")
+            for log_row in st.session_state.system_runtime_logs[:5]:
+                st.text(log_row)
 
-    st.markdown('<div style="text-align:center; font-family:monospace; font-size:10px; color:#474f5c; margin-top:30px; padding-top:12px; border-top:1px solid #1c212b;">'
-                'DELTA TERMINAL MAIN NODE ENGINE v5.0 PRO • COMPUTATION PIPELINE OPERATING HEALTHY • STATUS: ONLINE'
-                '</div>', unsafe_html=True)
+    st.write("---")
+    st.text("DELTA TERMINAL MAIN NODE ENGINE v5.0 PRO • COMPUTATION PIPELINE OPERATING HEALTHY • STATUS: ONLINE")
+    
