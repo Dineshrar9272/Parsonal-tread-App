@@ -203,7 +203,7 @@ if not st.session_state.fullscreen_mode:
     st.session_state.terminal_active_tab = selected_sub_panel_focus
     st.markdown("<br>", unsafe_html=True)
     
-    # ADVANCED TECHNICALS SUB-MODULE (STABLE DELTA CAPTURING TO PREVENT METRIC TYPE ERRORS)
+    # ADVANCED TECHNICALS SUB-MODULE (SAFE METRIC DRAWING)
     if st.session_state.terminal_active_tab == "📈 Advanced Algorithmic Calculations Engine":
         st.markdown("#### ⚙️ BACKEND ALGORITHMIC CALCULATION MATRIX ENGINE")
         
@@ -222,7 +222,7 @@ if not st.session_state.fullscreen_mode:
         
         math_ui_col1, math_ui_col2 = st.columns(2)
         with math_ui_col1:
-            # Fixed metric utility issue by rendering explicit dynamic delta strings
+            # Safe numeric delta string mapping to avoid runtime TypeError
             fast_delta_string = "Bullish Cross" if latest_computed_index_row['EMA_Fast'] > latest_computed_index_row['EMA_Slow'] else "Bearish Drop"
             st.metric(
                 label="Algorithmic Fast Trend Line (EMA-12)",
@@ -286,7 +286,7 @@ if not st.session_state.fullscreen_mode:
                     st.rerun()
             st.markdown('</div>', unsafe_html=True)
 
-    # COGNITIVE QUANT ENVIRONMENT SUB-MODULE
+    # COGNITIVE QUANT AGENT MODULE
     elif st.session_state.terminal_active_tab == "🤖 Cognitive Quant Agent Environment Room":
         st.markdown("#### 🤖 COGNITIVE QUANT DATA PROCESSING FEEDS")
         st.markdown(f'<div class="terminal-panel-frame">'
@@ -297,4 +297,5 @@ if not st.session_state.fullscreen_mode:
                     f'<p style="font-size:12px; color:#b7bdc6; line-height:1.5; margin:0px;">Quant tracking logic actively evaluating telemetry targets for <b>{resolved_active_symbol}USDT</b>. Core algorithmic engine synchronized.</p>'
                     f'</div>', unsafe_html=True)
         user_ai_prompt_entry = st.text_input("Quant Engine Query Context Field Box", placeholder="Enter core analysis inquiries...", label_visibility="collapsed")
-        if use
+        if user_ai_prompt_entry:
+            add_system_log(f"Telem
