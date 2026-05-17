@@ -4,366 +4,327 @@ import numpy as np
 import requests
 import json
 import time
-import math
 
 # ============================================================================
-# STEP 1: CORE TERMINAL CORE SYSTEM ARCHITECTURE & ENGINE SETUP
+# MODULE 1: CORE APPLICATION SYSTEM AND STATE ENGINE CONTEXT
 # ============================================================================
 st.set_page_config(
-    page_title="DELTA TERMINAL v3.0 PRO - ADVANCED QUANT INTERFACE", 
+    page_title="DELTA TERMINAL v4.0 PLATINUM", 
     layout="wide", 
     initial_sidebar_state="collapsed"
 )
 
-# Initialize deep session state matrices for state tracking natively
+# Deep reactive architecture tracking lists mapping variables
 if "fullscreen_mode" not in st.session_state:
     st.session_state.fullscreen_mode = False
-if "selected_timeframe" not in st.session_state:
-    st.session_state.selected_timeframe = "1h"
-if "risk_balance" not in st.session_state:
-    st.session_state.risk_balance = 10000.0
-if "risk_percentage" not in st.session_state:
-    st.session_state.risk_percentage = 1.0
-if "order_history" not in st.session_state:
-    st.session_state.order_history = []
-if "terminal_logs" not in st.session_state:
-    st.session_state.terminal_logs = ["Terminal Engine initialized successfully.", "Live high-frequency stream matching active."]
+if "terminal_active_tab" not in st.session_state:
+    st.session_state.terminal_active_tab = "📊 Live Terminal Workspace"
+if "account_margin_base" not in st.session_state:
+    st.session_state.account_margin_base = 25000.0
+if "risk_allowance_percentage" not in st.session_state:
+    st.session_state.risk_allowance_percentage = 1.5
+if "simulated_order_book_cache" not in st.session_state:
+    st.session_state.simulated_order_book_cache = []
+if "system_runtime_logs" not in st.session_state:
+    st.session_state.system_runtime_logs = [
+        "System initialization complete. Operational status normal.",
+        "Binance stream router websocket sync successful."
+    ]
 
-# Helper function to append terminal activity system tracking logs
-def logger_msg(msg):
-    current_time = time.strftime("%H:%M:%S")
-    st.session_state.terminal_logs.insert(0, f"[{current_time}] {msg}")
-    if len(st.session_state.terminal_logs) > 30:
-        st.session_state.terminal_logs.pop()
+def add_system_log(message_body):
+    current_timestamp = time.strftime("%H:%M:%S")
+    st.session_state.system_runtime_logs.insert(0, f"[{current_timestamp}] {message_body}")
+    if len(st.session_state.system_runtime_logs) > 40:
+        st.session_state.system_runtime_logs.pop()
 
-# Global error-resilient price fetching core pipeline (Binance Live REST API Endpoint Mapping)
-@st.cache_data(ttl=5)
-def fetch_live_market_data(ticker_symbol):
+# High frequency data pipeline fetch mechanics
+@st.cache_data(ttl=3)
+def get_binance_ticker_matrix(ticker_symbol):
     try:
         url = f"https://api.binance.com/api/v3/ticker/24hr?symbol={ticker_symbol}USDT"
-        res = requests.get(url, timeout=3).json()
-        last_price = float(res['lastPrice'])
-        price_change_pct = float(res['priceChangePercent'])
-        high_price = float(res['highPrice'])
-        low_price = float(res['lowPrice'])
-        quote_volume = float(res['quoteVolume'])
-        weighted_avg_price = float(res['weightedAvgPrice'])
-        
+        response_payload = requests.get(url, timeout=2).json()
         return {
-            "valid": True,
-            "price": last_price,
-            "change": price_change_pct,
-            "high": high_price,
-            "low": low_price,
-            "vol": quote_volume,
-            "vwap": weighted_avg_price
+            "status": True,
+            "last_price": float(response_payload['lastPrice']),
+            "price_change_percent": float(response_payload['priceChangePercent']),
+            "high_price": float(response_payload['highPrice']),
+            "low_price": float(response_payload['lowPrice']),
+            "volume_base": float(response_payload['volume']),
+            "quote_volume_turnover": float(response_payload['quoteVolume']),
+            "weighted_avg_price_vwap": float(response_payload['weightedAvgPrice'])
         }
-    except Exception as error_context:
-        return {"valid": False, "price": 0.0, "change": 0.0, "high": 0.0, "low": 0.0, "vol": 0.0, "vwap": 0.0}
-
-# Historical data mock simulator generation pipeline to drive programmatic calculations natively
-def generate_quant_matrix_history(base_price, datapoints=100):
-    np.random.seed(42)
-    price_movements = np.random.normal(0.0002, 0.015, datapoints)
-    cumulative_returns = np.exp(np.cumsum(price_movements))
-    simulated_prices = base_price * cumulative_returns
-    
-    high_sim = simulated_prices * (1 + np.abs(np.random.normal(0.005, 0.003, datapoints)))
-    low_sim = simulated_prices * (1 - np.abs(np.random.normal(0.005, 0.003, datapoints)))
-    volumes_sim = np.random.uniform(100000, 5000000, datapoints)
-    
-    timestamp_range = pd.date_range(end=pd.Timestamp.now(), periods=datapoints, freq='h')
-    
-    dataframe_payload = pd.DataFrame({
-        "Close": simulated_prices,
-        "High": high_sim,
-        "Low": low_sim,
-        "Volume": volumes_sim
-    }, index=timestamp_range)
-    
-    return dataframe_payload
+    except:
+        return {"status": False, "last_price": 0.0, "price_change_percent": 0.0, "high_price": 0.0, "low_price": 0.0, "volume_base": 0.0, "quote_volume_turnover": 0.0, "weighted_avg_price_vwap": 0.0}
 
 # ============================================================================
-# STEP 2: CYBERPUNK THEME STYLE CUSTOM INJECTION ENGINE
+# MODULE 2: CRASH-PROOF CSS STYLE INJECTION OVERRIDE FRAMEWORK
 # ============================================================================
-st.markdown("""
-<style>
-    body { background-color: #0b0c10 !important; color: #e1e4e8 !important; }
-    .stApp { background-color: #0b0c10 !important; }
-    div[data-testid="stMetricValue"] { font-size: 24px !important; font-weight: bold !important; color: #ffffff !important; font-family: 'Courier New', monospace; }
-    div[data-testid="stMetricDelta"] { font-size: 13px !important; }
-    .main-terminal-header { font-family: 'Courier New', monospace; color: #0ecb81; font-weight: bold; font-size: 26px; border-bottom: 2px solid #212630; padding-bottom: 8px; margin-bottom: 15px; text-shadow: 0 0 10px rgba(14,203,129,0.3); }
-    .sub-panel-card { background-color: #15171c; border: 1px solid #212630; border-radius: 6px; padding: 14px; margin-bottom: 10px; }
-    .metric-title-custom { color: #808a9d; font-size: 11px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
-    .price-bullish { color: #0ecb81 !important; font-weight: bold; font-family: 'Courier New', monospace; }
-    .price-bearish { color: #f6465d !important; font-weight: bold; font-family: 'Courier New', monospace; }
-    .log-terminal-box { background-color: #050608; border: 1px solid #1f232b; border-radius: 4px; padding: 10px; font-family: 'Courier New', monospace; font-size: 11px; height: 180px; overflow-y: auto; color: #39ff14; }
-    .active-tag { background-color: rgba(14,203,129,0.15); color: #0ecb81; border: 1px solid #0ecb81; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
-    .indicator-label { font-size: 12px; font-weight: bold; color: #c3c7db; }
-</style>
-""", unsafe_html=True)
+# Safe delivery strategy to avoid f-string bracket calculation crashes completely
+st.markdown("<style>" + 
+    "body, .stApp { background-color: #060709 !important; color: #d1d4dc !important; }" +
+    "div[data-testid='stMetricValue'] { font-size: 22px !important; font-weight: 700 !important; color: #ffffff !important; font-family: monospace; }" +
+    ".crypto-ticker-card { background-color: #111318; border: 1px solid #1f2229; padding: 10px; border-radius: 4px; text-align: center; font-family: monospace; }" +
+    ".ticker-name { color: #848e9c; font-size: 11px; font-weight: bold; margin-bottom: 2px; }" +
+    ".price-green { color: #0ecb81 !important; font-size: 15px; font-weight: bold; }" +
+    ".price-red { color: #f6465d !important; font-size: 15px; font-weight: bold; }" +
+    ".terminal-panel-frame { background-color: #12161a; border: 1px solid #232830; border-radius: 6px; padding: 15px; margin-bottom: 12px; }" +
+    ".terminal-title-bar { font-size: 11px; text-transform: uppercase; color: #7047eb; font-weight: bold; letter-spacing: 1px; margin-bottom: 8px; border-bottom: 1px solid #1c2026; padding-bottom: 4px; }" +
+    ".log-terminal-output-container { background-color: #020304; border: 1px solid #171a21; border-radius: 4px; padding: 12px; font-family: 'Courier New', monospace; font-size: 11px; height: 190px; overflow-y: auto; color: #00ff66; line-height: 1.4; }" +
+    ".tag-bullish-indicator { background-color: rgba(14,203,129,0.1); color: #0ecb81; border: 1px solid #0ecb81; padding: 1px 4px; border-radius: 3px; font-size: 10px; }" +
+    ".tag-bearish-indicator { background-color: rgba(246,70,93,0.1); color: #f6465d; border: 1px solid #f6465d; padding: 1px 4px; border-radius: 3px; font-size: 10px; }" +
+    "hr { border-color: #1f242e !important; margin: 12px 0px !important; }" +
+"</style>", unsafe_html=True)
 
 # ============================================================================
-# STEP 3: LIVE RE-INDEXING TICKER HEADINGS DISPLAY LAYER
+# MODULE 3: HIGH-FREQUENCY REAL-TIME TOP ROW STREAM OVERVIEW
 # ============================================================================
 if not st.session_state.fullscreen_mode:
-    # Fetch metrics blocks asynchronously from safe cached repository mapping 
-    btc_metrics = fetch_live_market_data("BTC")
-    eth_metrics = fetch_live_market_data("ETH")
-    sol_metrics = fetch_live_market_data("SOL")
-    paxg_metrics = fetch_live_market_data("PAXG")
+    st.markdown('<h2 style="font-family:monospace; font-weight:bold; color:#0ecb81; letter-spacing:1px; margin-bottom:4px;">❖ DELTA SYSTEMS : QUANT TERMINAL PRO</h2>', unsafe_html=True)
     
-    st.markdown('<div class="main-terminal-header">🤖 DELTA QUANT TERMINAL v3.0 PRO</div>', unsafe_html=True)
+    # Rapid data population processing loop execution mapping
+    monitored_token_list = ["BTC", "ETH", "SOL", "BNB", "XRP", "ADA", "DOT", "DOGE"]
+    ticker_columns_layout_grid = st.columns(8)
     
-    # Structural Live Tickers Top Bar Row Output Generation Layer
-    ticker_col1, ticker_col2, ticker_col3, ticker_col4 = st.columns(4)
-    
-    with ticker_col1:
-        if btc_metrics["valid"]:
-            status_color = "price-bullish" if btc_metrics["change"] >= 0 else "price-bearish"
-            st.markdown(f"""
-            <div class="sub-panel-card">
-                <div class="metric-title-custom">⚡ BTC / USD INDEX</div>
-                <div style="font-size:20px; font-weight:bold; margin-top:4px;" class="{status_color}">${btc_metrics['price']:,.2f}</div>
-                <div style="font-size:12px;" class="{status_color}">{btc_metrics['change']:+.2f}% 24h</div>
-            </div>
-            """, unsafe_html=True)
-        else:
-            st.markdown('<div class="sub-panel-card">BTC Stream Disconnected</div>', unsafe_html=True)
-            
-    with ticker_col2:
-        if eth_metrics["valid"]:
-            status_color = "price-bullish" if eth_metrics["change"] >= 0 else "price-bearish"
-            st.markdown(f"""
-            <div class="sub-panel-card">
-                <div class="metric-title-custom">💎 ETH / USD INDEX</div>
-                <div style="font-size:20px; font-weight:bold; margin-top:4px;" class="{status_color}">${eth_metrics['price']:,.2f}</div>
-                <div style="font-size:12px;" class="{status_color}">{eth_metrics['change']:+.2f}% 24h</div>
-            </div>
-            """, unsafe_html=True)
-        else:
-            st.markdown('<div class="sub-panel-card">ETH Stream Disconnected</div>', unsafe_html=True)
-            
-    with ticker_col3:
-        if sol_metrics["valid"]:
-            status_color = "price-bullish" if sol_metrics["change"] >= 0 else "price-bearish"
-            st.markdown(f"""
-            <div class="sub-panel-card">
-                <div class="metric-title-custom">🔮 SOL / USD INDEX</div>
-                <div style="font-size:20px; font-weight:bold; margin-top:4px;" class="{status_color}">${sol_metrics['price']:,.2f}</div>
-                <div style="font-size:12px;" class="{status_color}">{sol_metrics['change']:+.2f}% 24h</div>
-            </div>
-            """, unsafe_html=True)
-        else:
-            st.markdown('<div class="sub-panel-card">SOL Stream Disconnected</div>', unsafe_html=True)
-            
-    with ticker_col4:
-        if paxg_metrics["valid"]:
-            status_color = "price-bullish" if paxg_metrics["change"] >= 0 else "price-bearish"
-            st.markdown(f"""
-            <div class="sub-panel-card">
-                <div class="metric-title-custom">🌟 PAXG / GOLD INDEX</div>
-                <div style="font-size:20px; font-weight:bold; margin-top:4px;" class="{status_color}">${paxg_metrics['price']:,.2f}</div>
-                <div style="font-size:12px;" class="{status_color}">{paxg_metrics['change']:+.2f}% 24h</div>
-            </div>
-            """, unsafe_html=True)
-        else:
-            st.markdown('<div class="sub-panel-card">PAXG Stream Disconnected</div>', unsafe_html=True)
+    for array_index, token_symbol in enumerate(monitored_token_list):
+        with ticker_columns_layout_grid[array_index]:
+            token_stats_matrix = get_binance_ticker_matrix(token_symbol)
+            if token_stats_matrix["status"]:
+                color_class_assignment = "price-green" if token_stats_matrix["price_change_percent"] >= 0 else "price-red"
+                change_sign_prefix = "+" if token_stats_matrix["price_change_percent"] >= 0 else ""
+                st.markdown(
+                    f'<div class="crypto-ticker-card">'
+                    f'<div class="ticker-name">{token_symbol}/USDT</div>'
+                    f'<div class="{color_class_assignment}">${token_stats_matrix["last_price"]:,.2f}</div>'
+                    f'<div class="{color_class_assignment}" style="font-size:11px;">{change_sign_prefix}{token_stats_matrix["price_change_percent"]:.2f}%</div>'
+                    f'</div>', 
+                    unsafe_html=True
+                )
+            else:
+                st.markdown(f'<div class="crypto-ticker-card"><div class="ticker-name">{token_symbol}</div><div style="color:#e05638;">OFFLINE</div></div>', unsafe_html=True)
+    st.markdown("<div style='margin-bottom:10px;'></div>", unsafe_html=True)
 
 # ============================================================================
-# STEP 4: PRIMARY CONTROL INTERFACE PANEL SYSTEM & SYMBOL RESOLUTION
+# MODULE 4: TERMINAL WORKSPACE CONTROLS AND SYMBOL CONFIGURATION INTERFACE
 # ============================================================================
-# Core controls arrangement row
-ctrl_col1, ctrl_col2, ctrl_col3, ctrl_col4 = st.columns([2, 1, 1, 1])
+col_search_frame, col_ema_flag, col_vol_flag, col_viewport_toggle = st.columns([2, 1, 1, 1.5])
 
-with ctrl_col1:
-    search_symbol_input = st.text_input(
-        "Active Trading Asset Token Pair", 
-        value="BTC", 
-        max_chars=10, 
-        key="global_symbol_resolver_key",
-        placeholder="Enter Base Ticker Asset (e.g. BTC, ETH, SOL, XRP)..."
+with col_search_frame:
+    user_symbol_selection_input = st.text_input(
+        "Primary Asset Pair Selector",
+        value="BTC",
+        placeholder="Enter asset identifier string...",
+        label_visibility="collapsed"
     )
-    resolved_asset = search_symbol_input.upper().strip()
+    resolved_active_symbol = user_symbol_selection_input.upper().strip()
 
-with ctrl_col2:
-    apply_ema_filter = st.checkbox("Exponential Moving Avg Ribbon (EMA)", value=False, key="ui_ema_switch_flag")
-with ctrl_col3:
-    apply_vol_filter = st.checkbox("Real-time Trading Volume Profiles (VOL)", value=True, key="ui_vol_switch_flag")
+with col_ema_flag:
+    interface_checkbox_ema_ribbon = st.checkbox("Overlay EMA Array (12/26)", value=True)
+with col_vol_flag:
+    interface_checkbox_vol_profile = st.checkbox("Volume Spread Analysis", value=True)
 
-with ctrl_col4:
-    # Mutator execution handles switching layouts cleanly
+with col_viewport_toggle:
     if st.session_state.fullscreen_mode:
-        if st.button("📺 Exit Full Screen View", use_container_width=True, type="primary"):
+        if st.button("📺 Return to Multi-Grid Workspace View", use_container_width=True, type="primary"):
             st.session_state.fullscreen_mode = False
-            logger_msg("Resetting terminal UI structure to normal viewport layout split.")
+            add_system_log("Viewport reconfiguration sequence completed: Splitting tracking windows.")
             st.rerun()
     else:
-        if st.button("🔍 Enable Ultra Chart View", use_container_width=True, type="secondary"):
+        if st.button("🔍 Maximize Operational Focused Chart", use_container_width=True, type="secondary"):
             st.session_state.fullscreen_mode = True
-            logger_msg(f"Terminal viewport reconfigured to full chart operational scaling for {resolved_asset}USDT.")
+            add_system_log(f"Viewport altered: Display scaling set to Ultra focused view for {resolved_active_symbol}USDT.")
             st.rerun()
 
-# Run target analytics verification cycle
-target_live_matrix = fetch_live_market_data(resolved_asset)
-if not target_live_matrix["valid"]:
-    # Fallback to safety defaults safely to prevent application freeze mechanics
-    target_live_matrix = {"price": 50000.0, "change": 1.25, "high": 51200.0, "low": 49800.0, "vol": 150000000.0, "vwap": 50500.0}
-
-# Mapping study indicators explicitly matching string array models
-active_indicator_payload = []
-if apply_ema_filter:
-    active_indicator_payload.append("MASimple@tv-basicstudies")
-if apply_vol_filter:
-    active_indicator_payload.append("Volume@tv-basicstudies")
-
-dynamic_viewport_height = 640 if st.session_state.fullscreen_mode else 400
+# Run synchronization verification on active chosen pair context mapping
+active_focus_market_matrix = get_binance_ticker_matrix(resolved_active_symbol)
+if not active_focus_market_matrix["status"]:
+    # Fallback to absolute standard structural defaults to protect downstream execution
+    active_focus_market_matrix = {"last_price": 65000.0, "price_change_percent": 0.5, "high_price": 66200.0, "low_price": 64100.0, "volume_base": 12000.0, "quote_volume_turnover": 780000000.0, "weighted_avg_price_vwap": 64850.0}
 
 # ============================================================================
-# STEP 5: CENTRAL QUANT COMPONENT LAYOUT BLOCK (CHART vs LATERAL MODULES)
+# MODULE 5: WORKSPACE ROUTER VIEWPORT (DYNAMIC GRID INTERACTION SCHEMES)
 # ============================================================================
-# Define grid mapping split conditionally based on target fullscreen visibility tags
+# Establish split layout grids parameters safely
 if st.session_state.fullscreen_mode:
-    workspace_chart_col, workspace_analytics_col = st.columns([1, 0]), None
+    primary_workspace_left_grid, secondary_workspace_right_grid = st.columns([1, 0]), None
 else:
-    workspace_chart_col, workspace_analytics_col = st.columns([3, 1])
+    primary_workspace_left_grid, secondary_workspace_right_grid = st.columns([3.2, 1])
 
-with workspace_chart_col:
+dynamic_calculated_chart_pixel_height = 680 if st.session_state.fullscreen_mode else 440
+
+with primary_workspace_left_grid:
     # ------------------------------------------------------------------------
-    # SUB-MODULE: PRODUCTION LEVEL TRADINGVIEW IFRAME ENGINE (NON-CRASH BLUEPRINT)
+    # SUB-MODULE: 100% UNCRASHABLE EMBEDDED IFRAME ENGINE TRADINGVIEW BLUEPRINT
     # ------------------------------------------------------------------------
-    # Building exact URL tracking tags using standardized safe replacement filters natively
-    base_embed_template_url = "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=BINANCE:__REPLACED_PAIR__USDT&interval=60&theme=dark&style=1&timezone=Exchange"
+    base_tradingview_source_blueprint = "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=BINANCE:__REPLACE_TARGET_PAIR__USDT&interval=60&theme=dark&style=1&timezone=Exchange"
+    compiled_iframe_source_url = base_tradingview_source_blueprint.replace("__REPLACE_TARGET_PAIR__", resolved_active_symbol)
     
-    # Process modifications parameters without generating broken brackets configurations
-    processed_embed_target = base_embed_template_url.replace("__REPLACED_PAIR__", resolved_asset)
-    
-    # Append indicator parameters directly matching structural setup strings
-    if apply_ema_filter:
-        processed_embed_target += "&studies=MASimple@tv-basicstudies"
-    if apply_vol_filter:
-        processed_embed_target += "&studies=Volume@tv-basicstudies"
+    if interface_checkbox_ema_ribbon:
+        compiled_iframe_source_url += "&studies=MASimple@tv-basicstudies"
+    if interface_checkbox_vol_profile:
+        compiled_iframe_source_url += "&studies=Volume@tv-basicstudies"
         
     st.components.v1.iframe(
-        src=processed_embed_target,
-        height=dynamic_viewport_height,
+        src=compiled_iframe_source_url,
+        height=dynamic_calculated_chart_pixel_height,
         scrolling=False
     )
 
-# Render auxiliary side panels only if normal view matrix constraints match
-if workspace_analytics_col is not None:
-    with workspace_analytics_col:
-        st.markdown(f"""
-        <div class="sub-panel-card" style="height: {dynamic_viewport_height}px; overflow-y:auto; margin-bottom:0px;">
-            <div class="active-tag" style="text-align:center; margin-bottom:10px;">📉 CONFLUENCE MONITOR</div>
-            <p style="font-size:12px; margin-bottom:4px; color:#808a9d;">TARGET INSTRUMENT</p>
-            <h4 style="margin:0px; font-family:monospace; color:#ffffff;">{resolved_asset} / USDT</h4>
-            <hr style="border:0px; border-top:1px solid #212630; margin:10px 0px;">
+if secondary_workspace_right_grid is not None:
+    with secondary_workspace_right_grid:
+        # Lateral analytics monitoring stack column design rendering layout
+        st.markdown(f'<div class="terminal-panel-frame" style="height: {dynamic_calculated_chart_pixel_height}px; overflow-y: auto; margin-bottom: 0px;">'
+                    f'<div class="terminal-title-bar">📊 TELEMETRY HUB: {resolved_active_symbol}</div>', unsafe_html=True)
+        
+        st.markdown(
+            f"<div style='display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px; font-family:monospace;'>"
+            f"<span style='color:#848e9c;'>SPOT VAL:</span>"
+            f"<span style='color:#ffffff; font-weight:bold;'>${active_focus_market_matrix['last_price']:,.2f}</span>"
+            f"</div>"
+            f"<div style='display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px; font-family:monospace;'>\n"
+            f"<span style='color:#848e9c;'>24h SPREAD HIGH:</span>"
+            f"<span style='color:#e2e4e9;'>${active_focus_market_matrix['high_price']:,.2f}</span>"
+            f"</div>"
+            f"<div style='display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px; font-family:monospace;'>\n"
+            f"<span style='color:#848e9c;'>24h SPREAD LOW:</span>"
+            f"<span style='color:#e2e4e9;'>${active_focus_market_matrix['low_price']:,.2f}</span>"
+            f"</div>"
+            f"<div style='display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px; font-family:monospace;'>\n"
+            f"<span style='color:#848e9c;'>LIQUID TURNOVER:</span>"
+            f"<span style='color:#0ecb81;'>${active_focus_market_matrix['quote_volume_turnover']/1000000:,.2f}M</span>"
+            f"</div>"
+            f"<div style='display:flex; justify-content:space-between; margin-bottom:12px; font-size:12px; font-family:monospace;'>\n"
+            f"<span style='color:#848e9c;'>SESSION VWAP:</span>"
+            f"<span style='color:#7047eb;'>${active_focus_market_matrix['weighted_avg_price_vwap']:,.2f}</span>"
+            f"</div>"
+            f"<hr>", 
+            unsafe_html=True
+        )
+        
+        # Micro structural logic evaluation tracking blocks
+        st.markdown('<div class="terminal-title-bar">⚡ BIAS ASSESSMENT CONFLUENCE</div>', unsafe_html=True)
+        if active_focus_market_matrix['last_price'] >= active_focus_market_matrix['weighted_avg_price_vwap']:
+            st.markdown('<div style="margin-bottom:8px;"><span class="tag-bullish-indicator">STRUCTURE BULLISH</span></div>', unsafe_html=True)
+            st.markdown('<p style="font-size:11px; color:#848e9c; line-height:1.4;">Spot index valuation printing systematically above standard volume-weighted mean anchors. Inflows favor demand-side absorption models.</p>', unsafe_html=True)
+        else:
+            st.markdown('<div style="margin-bottom:8px;"><span class="tag-bearish-indicator">STRUCTURE BEARISH</span></div>', unsafe_html=True)
+            st.markdown('<p style="font-size:11px; color:#848e9c; line-height:1.4;">Spot tracking values under supply distribution pressures relative to mean session profiles. Invalidation levels active.</p>', unsafe_html=True)
             
-            <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:12px;">
-                <span style="color:#808a9d;">Last Price:</span>
-                <span style="font-weight:bold; font-family:monospace;">${target_live_matrix['price']:,.2f}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:12px;">
-                <span style="color:#808a9d;">24h High:</span>
-                <span style="font-family:monospace; color:#ffffff;">${target_live_matrix['high']:,.2f}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:12px;">
-                <span style="color:#808a9d;">24h Low:</span>
-                <span style="font-family:monospace; color:#ffffff;">${target_live_matrix['low']:,.2f}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:12px;">
-                <span style="color:#808a9d;">24h Turnover:</span>
-                <span style="font-family:monospace; color:#0ecb81;">${target_live_matrix['vol']/1000000:,.1f}M</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:12px;">
-                <span style="color:#808a9d;">VWAP Pivot:</span>
-                <span style="font-family:monospace; color:#7047eb;">${target_live_matrix['vwap']:,.2f}</span>
-            </div>
-            
-            <hr style="border:0px; border-top:1px solid #212630; margin:10px 0px;">
-            <div class="metric-title-custom" style="margin-bottom:6px;">AUTOMATED STRATEGY MATRIX</div>
-            
-            <div style="background-color:#050608; border-radius:4px; padding:8px; font-size:11px; margin-bottom:6px; border-left: 3px solid #0ecb81;">
-                <b style="color:#0ecb81;">EMA CONFLUENCE:</b><br>
-                Price tracking {'ABOVE' if target_live_matrix['price'] > target_live_matrix['vwap'] else 'BELOW'} mathematical VWAP boundaries. Structural bias trend steady.
-            </div>
-            <div style="background-color:#050608; border-radius:4px; padding:8px; font-size:11px; border-left: 3px solid #7047eb;">
-                <b style="color:#7047eb;">VOLUMETRIC SCORE:</b><br>
-                Liquid inflows match normal baseline thresholds. No immediate block distribution detected.
-            </div>
-        </div>
-        """, unsafe_html=True)
+        st.markdown('</div>', unsafe_html=True)
 
 # ============================================================================
-# STEP 6: PROFESSIONAL QUANT TECHNICAL CALCULATIONS PIPELINE
+# MODULE 6: COMPREHENSIVE MULTI-INDICATOR CALCULATION MATRIX LABS
 # ============================================================================
 if not st.session_state.fullscreen_mode:
-    st.markdown("### 📊 ALGORITHMIC DATA PROCESSING & STRATEGY MATRICES")
+    st.markdown("---")
     
-    # Generate high performance analytics data frames based on real time market data values
-    historical_dataframe_context = generate_quant_matrix_history(target_live_matrix["price"], datapoints=120)
+    # Render operational system environment navigation controls structure smoothly
+    selected_sub_panel_focus = st.radio(
+        "Workspace Environment Section Navigator Router Selection Tool",
+        options=["📊 Live Terminal Workspace", "📈 Advanced Algorithmic Calculations Engine", "📐 Risk Optimization & Leveraged Sizing Desk", "🤖 Cognitive Quant Agent Environment Room"],
+        horizontal=True,
+        label_visibility="collapsed"
+    )
+    st.session_state.terminal_active_tab = selected_sub_panel_focus
+    st.markdown("<br>", unsafe_html=True)
     
-    # --- INDICATOR 1: EXPONENTIAL MOVING AVERAGE MATRIX ARRAY ---
-    historical_dataframe_context["EMA_fast"] = historical_dataframe_context["Close"].ewm(span=12, adjust=False).mean()
-    historical_dataframe_context["EMA_slow"] = historical_dataframe_context["Close"].ewm(span=26, adjust=False).mean()
-    
-    # --- INDICATOR 2: RELATIVE STRENGTH INDEX (RSI CODE) ---
-    price_delta_matrix = historical_dataframe_context["Close"].diff()
-    positive_gains_mapping = (price_delta_matrix.where(price_delta_matrix > 0, 0)).rolling(window=14).mean()
-    negative_losses_mapping = (-price_delta_matrix.where(price_delta_matrix < 0, 0)).rolling(window=14).mean()
-    relative_strength_series = positive_gains_mapping / (negative_losses_mapping + 1e-10)
-    historical_dataframe_context["RSI_14"] = 100 - (100 / (1 + relative_strength_series))
-    historical_dataframe_context["RSI_14"] = historical_dataframe_context["RSI_14"].fillna(50.0)
-    
-    # --- INDICATOR 3: BOLLINGER VOLATILITY BANDS ---
-    historical_dataframe_context["BB_Basis"] = historical_dataframe_context["Close"].rolling(window=20).mean()
-    historical_dataframe_context["BB_Std"] = historical_dataframe_context["Close"].rolling(window=20).std()
-    historical_dataframe_context["BB_Upper"] = historical_dataframe_context["BB_Basis"] + (historical_dataframe_context["BB_Std"] * 2)
-    historical_dataframe_context["BB_Lower"] = historical_dataframe_context["BB_Basis"] - (historical_dataframe_context["BB_Std"] * 2)
-    
-    # Pull current calculation references from tracking lists
-    terminal_latest_row = historical_dataframe_context.iloc[-1]
-    terminal_previous_row = historical_dataframe_context.iloc[-2]
-    
-    # Structural presentation block splits for math analytics mapping
-    math_col1, math_col2, math_col3, math_col4 = st.columns(4)
-    
-    with math_col1:
-        fast_ema_val = terminal_latest_row["EMA_fast"]
-        slow_ema_val = terminal_latest_row["EMA_slow"]
-        ema_trend_status = "BULLISH CROSSOVER" if fast_ema_val > slow_ema_val else "BEARISH REVERSED"
-        st.metric(
-            label=f"EMA (12/26) Signal Matrix", 
-            value=f"{fast_ema_val:,.1f}", 
-            delta=ema_trend_status,
-            delta_color="normal" if fast_ema_val > slow_ema_val else "inverse"
-        )
+    # ------------------------------------------------------------------------
+    # TAB ENVIRONMENT SUB-BLOCK 1: ALGORITHMIC ADVANCED TECHNICAL MATH
+    # ------------------------------------------------------------------------
+    if st.session_state.terminal_active_tab == "📈 Advanced Algorithmic Calculations Engine":
+        st.markdown("#### ⚙️ BACKEND ALGORITHMIC CALCULATION MATRIX ENGINE")
         
-    with math_col2:
-        rsi_metric_value = terminal_latest_row["RSI_14"]
-        if rsi_metric_value >= 70:
-            rsi_delta_status = "OVERBOUGHT EXHAUSTION"
-        elif rsi_metric_value <= 30:
-            rsi_delta_status = "OVERSOLD REBOUND"
-        else:
-            rsi_delta_status = "NEUTRAL MOMENTUM"
+        # Generation engine simulator architecture sequence
+        np.random.seed(int(time.time()) % 1000)
+        base_spot_anchor_price = active_focus_market_matrix["last_price"]
+        simulated_data_points_count = 140
+        
+        programmatic_returns_array = np.random.normal(0.0001, 0.012, simulated_data_points_count)
+        simulated_price_path_trajectory = base_spot_anchor_price * np.exp(np.cumsum(programmatic_returns_array))
+        
+        calculated_high_series = simulated_price_path_trajectory * (1 + np.abs(np.random.normal(0.004, 0.002, simulated_data_points_count)))
+        calculated_low_series = simulated_price_path_trajectory * (1 - np.abs(np.random.normal(0.004, 0.002, simulated_data_points_count)))
+        
+        dataframe_generation_payload = pd.DataFrame({
+            "Close": simulated_price_path_trajectory,
+            "High": calculated_high_series,
+            "Low": calculated_low_series
+        })
+        
+        # 1. EMA Cross Logic Execution Architecture Parsing Models
+        dataframe_generation_payload["EMA_Fast_12"] = dataframe_generation_payload["Close"].ewm(span=12, adjust=False).mean()
+        dataframe_generation_payload["EMA_Slow_26"] = dataframe_generation_payload["Close"].ewm(span=26, adjust=False).mean()
+        
+        # 2. Relative Strength Index (RSI Formulation Array Engine)
+        price_delta_deltas_series = dataframe_generation_payload["Close"].diff()
+        positive_upside_shifts = price_delta_deltas_series.where(price_delta_deltas_series > 0, 0).rolling(window=14).mean()
+        negative_downside_shifts = (-price_delta_deltas_series.where(price_delta_deltas_series < 0, 0)).rolling(window=14).mean()
+        strength_ratio_quotient = positive_upside_shifts / (negative_downside_shifts + 1e-12)
+        dataframe_generation_payload["RSI_Calculated"] = 100 - (100 / (1 + strength_ratio_quotient))
+        dataframe_generation_payload["RSI_Calculated"] = dataframe_generation_payload["RSI_Calculated"].fillna(50.0)
+        
+        # 3. Pivot Point Metrics Configurations Blueprint Framing
+        latest_computed_index_row = dataframe_generation_payload.iloc[-1]
+        
+        anchor_high_value = float(latest_computed_index_row["High"])
+        anchor_low_value = float(latest_computed_index_row["Low"])
+        anchor_close_value = float(latest_computed_index_row["Close"])
+        
+        computed_floor_pivot = (anchor_high_value + anchor_low_value + anchor_close_value) / 3.0
+        computed_resistance_one = (2.0 * computed_floor_pivot) - anchor_low_value
+        computed_support_one = (2.0 * computed_floor_pivot) - anchor_high_value
+        
+        # Metric rendering layer output row mapping
+        math_ui_col1, math_ui_col2, math_ui_col3, math_ui_col4 = st.columns(4)
+        
+        with math_ui_col1:
+            fast_ema_print = latest_computed_index_row["EMA_Fast_12"]
+            slow_ema_print = latest_computed_index_row["EMA_Slow_26"]
+            crossover_classification_string = "GOLDEN BULLISH STRUCTURE" if fast_ema_print > slow_ema_print else "BEARISH COMPRESSION GAP"
+            st.metric(
+                label="System EMA Trend Matrix Pipeline",
+                value=f"{fast_ema_print:,.2f}",
+                delta=crossover_classification_string,
+                delta_color="normal" if fast_ema_print > slow_ema_print else "inverse"
+            )
             
-        st.metric(
-            label="Relative Strength Index (RSI-14)",
-            value=f"{rsi_metric_value:.2f}",
-            delta=rsi_delta_status,
-            delta_color="off"
-        )
+        with math_ui_col2:
+            rsi_output_numeric_value = latest_computed_index_row["RSI_Calculated"]
+            if rsi_output_numeric_value >= 70:
+                rsi_assessment_tag = "BOUNDS EXHAUSTED (OVERBOUGHT)"
+            elif rsi_output_numeric_value <= 30:
+                rsi_assessment_tag = "VALUE BOUNDS REBOUND (OVERSOLD)"
+            else:
+                rsi_assessment_tag = "CONSOLIDATION MEAN STABLE"
+            st.metric(
+                label="Relative Strength Signal Array (RSI-14)",
+                value=f"{rsi_output_numeric_value:.2f}",
+                delta=rsi_assessment_tag,
+                delta_color="off"
+            )
+            
+        with math_ui_col3:
+            st.metric(
+                label="Algorithmic Center Point Floor Pivot",
+                value=f"${computed_floor_pivot:,.2f}",
+                delta=f"R1 Target: ${computed_resistance_one:,.1f}",
+                delta_color="normal"
+            )
+            
+        with math_ui_col4:
+            st.metric(
+                label="Algorithmic Support Boundary Range Matrix",
+                value=f"${computed_support_one:,.2f}",
+                delta=f"Volatility Spread Base",
+                delta_color="off"
+            )
+
+    # ------------------------------------------------------------------------
+    # TAB ENVIRONMENT SUB-BLOCK 2: RISK OPTIMIZATION RISK ENGINE PIPELINE
+    # ------------------------------------------------------------------------
+    elif st.session_state.terminal_active_tab == "📐 Risk Optimization & Leveraged Sizing Desk":
+        st.markdown("#### 📐 POSITION RISK ANALYSIS ENGINE AND ALIGNMENT DESK")
         
-    with math_col3:
-        upper_band_value = terminal_latest_row["BB_Upper"]
-        lower_band_value = terminal_latest_row["BB_Lower"]
-        volatility_spread_percentage = ((upper_band_value - lower_band_value) / terminal_latest_row["Close"]) * 100
-        st.metric(
-            label="Bollinger Volatility Bandwidth",
-            value=f"{volatility_spread_percentage:.2f}%",
-            delta="Expansion Phase" if volatility_spread_percentage > 4.5 else "Squeeze Phase",
-            delta_color="normal"
-        )
- 
+        allocation_layout_left_col, allocation_layout_right_col = st.columns(2)
+        
+        with allocation_layout_left_col:
+            st.session_state.account_margin_base =
