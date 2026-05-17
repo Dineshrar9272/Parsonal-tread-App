@@ -285,7 +285,7 @@ if not st.session_state.fullscreen_mode:
                     st.rerun()
             st.markdown('</div>', unsafe_html=True)
 
-    # 3. COGNITIVE QUANT AGENT MODULE (FIXED ERROR STRINGS & CONDITIONS HERE)
+    # 3. COGNITIVE QUANT AGENT MODULE (STRINGS EXPLICITLY REPAIRED HERE)
     elif st.session_state.terminal_active_tab == "🤖 Cognitive Quant Agent Environment Room":
         st.markdown("#### 🤖 COGNITIVE QUANT DATA PROCESSING FEEDS")
         st.markdown(f'<div class="terminal-panel-frame">'
@@ -300,4 +300,9 @@ if not st.session_state.fullscreen_mode:
         
         if user_ai_prompt_entry:
             add_system_log(f"Telemetry query parsed: {user_ai_prompt_entry}")
-            response_html = f'<div style="background-color:#020304; border:1px solid #7047eb; padding:12px; border-radius:4px; font-family:monospace; font-size:12px; color:#e2e4e9; margin-top:8px;"><b style="color:#7047eb;">🤖 QUANT ENGINE RESPONSE:</b><br>Processed strategy context parameters for asset identifier {resolved_active_symbol} at terminal index level ${active_focus_market_matrix["last
+            
+            # Line 383 String Error Fixed perfectly via structured multiline markdown concatenation
+            st.markdown(
+                f"""
+                <div style="background-color:#020304; border:1px solid #7047eb; padding:12px; border-radius:4px; font-family:monospace; font-size:12px; color:#e2e4e9; margin-top:8px;">
+                    <b style="color:#7047eb;">🤖 QUANT ENGIN
