@@ -11,7 +11,7 @@ st.write("Yeh app historical data fetch karke technical aur chart analysis dikha
 
 # --- SIDEBAR - INPUTS ---
 st.sidebar.header("User Inputs")
-ticker = st.sidebar.text_input("Stock Ticker (e.g., AAPL, TSLA, RELIANCE.NS)", value="AAPL")
+ticker = st.sidebar.text_input("Stock Ticker (e.g., AAPL, TSLA, RELIANCE.NS)", value="AAPL").upper().strip()
 
 # Date settings (Pichle 1 saal ka data)
 end_date = datetime.now()
@@ -20,18 +20,23 @@ start_date = end_date - timedelta(days=365)
 # --- DATA FETCHING ---
 @st.cache_data
 def load_data(stock_ticker):
-    # yfinance se data download ho raha hai
-    data = yf.download(stock_ticker, start=start_date, end=end_date)
-    return data
+    try:
+        # Ticker object ka use karke history nikal rahe hain takki multi-index columns ka error na aaye
+        ticker_obj = yf.Ticker(stock_ticker)
+        data = ticker_obj.history(start=start_date, end=end_date)
+        return data
+    except Exception as e:
+        return pd.DataFrame()
 
-try:
-    df = load_data(ticker)
-    
-    if df.empty:
-        st.error("Koi data nahi mila. Kripya sahi ticker symbol dalein.")
-    else:
+df = load_data(ticker)
+
+# Check if data is valid
+if df.empty or len(df) < 20:
+    st.warning(f"⏳ Ticker '{ticker}' ka data load ho raha hai ya fir symbol galat hai. Agar data nahi aata, toh sidebar mein sahi ticker dalein (Jaise: TSLA ya Indian stocks ke liye RELIANCE.NS).")
+else:
+    try:
         # --- TECHNICAL ANALYSIS CALCULATIONS ---
-        # 1. Moving Averages (Purani style simple trend analysis)
+        # Naye yfinance mein columns capital hote hain (Open, High, Low, Close)
         df['20_SMA'] = df['Close'].rolling(window=20).mean()
         df['50_SMA'] = df['Close'].rolling(window=50).mean()
 
@@ -72,7 +77,7 @@ try:
         if is_hammer:
             st.success("🎯 **Bullish Hammer Pattern Detected!** Yeh ek potential trend reversal (upmove) ka signal ho sakta hai.")
         else:
-            st.info("ℹ️ Latest candle par koi specific Candlestick Pattern (जैसे Hammer) nahi mila. Market normal logic follow kar raha hai.")
+            st.info("ℹ️ Latest candle par koi specific Candlestick Pattern (जैसे Hammer) nahi mila. Market normal trend follow kar raha hai.")
 
         # --- VISUALIZATION (PLOTLY CHART) ---
         st.subheader("📊 Price Chart with Moving Averages")
@@ -109,6 +114,6 @@ try:
         st.subheader("📂 Recent Historical Data")
         st.dataframe(df.tail(10))
 
-except Exception as e:
-    st.error(f"App ko chalane me dikkat aayi: {e}")
-    
+    except Exception as e:
+        st.error(f"Data processing mein dikkat aayi: {e}")
+        
