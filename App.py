@@ -1,14 +1,3 @@
-// Old Pine Script (v2) Crossover Logic
-src = close
-fastMA = ema(src, 9)
-slowMA = ema(src, 21)
-
-// Buy/Sell Signals based on chart analysis
-buySignal = crossover(fastMA, slowMA)
-sellSignal = crossunder(fastMA, slowMA)
-
-plotshape(buySignal, title="Buy", style=shape.triangleup, location=location.belowbar, color=color.green)
-plotshape(sellSignal, title="Sell", style=shape.triangledown, location=location.abovebar, color=color.red)
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -243,4 +232,9 @@ elif app_navigation_panel == "💰 Profit & PnL Ledger":
 # ============================================================================
 st.markdown("<br><hr>", unsafe_allow_html=True)
 st.markdown("<p style='text-align:center; font-size:11px; font-family:monospace; color:#474f5c;'>DELTA QUANT NETWORK PIPELINE RENDER ENGINE v6.0 PRO • ALL MODULE SYSTEMS STATUS: OPERATIONAL ONLINE</p>", unsafe_allow_html=True)
-            
+# Old Python/Pandas style logic for Hammer Chart Analysis
+body_size = abs(close - open)
+lower_wick = minimum(open, close) - low
+upper_wick = high - maximum(open, close)
+
+is_hammer = (lower_wick >= 2 * body_size) & (upper_wick <= 0.1 * body_size)
