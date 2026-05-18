@@ -1,3 +1,14 @@
+// Old Pine Script (v2) Crossover Logic
+src = close
+fastMA = ema(src, 9)
+slowMA = ema(src, 21)
+
+// Buy/Sell Signals based on chart analysis
+buySignal = crossover(fastMA, slowMA)
+sellSignal = crossunder(fastMA, slowMA)
+
+plotshape(buySignal, title="Buy", style=shape.triangleup, location=location.belowbar, color=color.green)
+plotshape(sellSignal, title="Sell", style=shape.triangledown, location=location.abovebar, color=color.red)
 import streamlit as st
 import pandas as pd
 import numpy as np
